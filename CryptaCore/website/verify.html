@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptaCore - Universal Record Verification</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script type="module" src="cryptacore-core.js"></script>
+</head>
+<body class="dark-mode">
+    <!-- Floating Luxury Pill Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="navbar-brand">
+                <img src="logo.svg" alt="CryptaCore Logo" class="navbar-logo">
+                <div class="brand-text">
+                    <span>CryptaCore</span>
+                    <span class="brand-version-pill">v3.0</span>
+                </div>
+            </a>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html#home" class="nav-link">Home</a>
+                <a href="index.html#problem" class="nav-link">Problem</a>
+                <a href="index.html#solution" class="nav-link">Solution</a>
+                <a href="index.html#how-it-works" class="nav-link">Architecture</a>
+                <a href="verify.html" class="nav-link active"><i class="fas fa-check-double"></i> Verify</a>
+                <a href="admin.html" class="nav-link nav-link-highlight"><i class="fas fa-shield-alt"></i> Admin Console</a>
+                <a href="QUICKSTART.html" class="nav-link"><i class="fas fa-book-open"></i> Docs</a>
+                <a href="index.html#demo" class="nav-link"><i class="fas fa-terminal"></i> Playground</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle dark / light mode" aria-label="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Verification Section -->
+    <section class="verify-section">
+        <div class="container">
+            <div class="verify-card">
+                <h1><i class="fas fa-shield-halved"></i> Universal Record Verification</h1>
+                <p class="section-subtitle">Cryptographically authenticate licenses, credentials, digital assets, supply chain provenance, and academic certificates on the CryptaCore Trust Layer</p>
+
+                <!-- Search/Input Form -->
+                <div class="verification-form">
+                    <div class="form-group">
+                        <label for="verifyHash">Record ID, Blockchain Hash, or Holder Name</label>
+                        <input type="text" id="verifyHash" name="verifyHash" 
+                               placeholder="e.g. LIC-2026-001, CRD-2026-001, AST-2026-001, PRD-2026-001, CC-2026-7842, or 0x..."
+                               class="verify-input">
+                    </div>
+                    <button class="btn btn-primary btn-lg" onclick="verifyManager.verifyCertificate()">
+                        <i class="fas fa-search"></i> Verify Authenticity
+                    </button>
+                </div>
+
+                <!-- Quick Verification Test Chips -->
+                <div class="quick-verify-chips" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; align-items: center; justify-content: center;">
+                    <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;"><i class="fas fa-bolt text-primary"></i> Quick Test:</span>
+                    <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;" onclick="verifyManager.quickVerify('LIC-2026-001')"><i class="fas fa-id-card"></i> License (LIC-001)</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;" onclick="verifyManager.quickVerify('CRD-2026-001')"><i class="fas fa-award"></i> Credential (CRD-001)</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;" onclick="verifyManager.quickVerify('AST-2026-001')"><i class="fas fa-fingerprint"></i> Asset (AST-001)</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;" onclick="verifyManager.quickVerify('PRD-2026-001')"><i class="fas fa-truck-ramp-box"></i> Supply Chain (PRD-001)</button>
+                    <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;" onclick="verifyManager.quickVerify('CC-2026-7842')"><i class="fas fa-graduation-cap"></i> Degree (CC-7842)</button>
+                </div>
+
+                <!-- Verification Result -->
+                <div id="verificationResult" class="verification-result" style="display: none; margin-top: 2rem;">
+                    <div id="resultContent"></div>
+                </div>
+
+                <!-- No Result Message -->
+                <div id="noResultMessage" style="display: none; text-align: center; margin-top: 2rem;">
+                    <p style="color: var(--text-secondary);">
+                        <i class="fas fa-info-circle"></i> Enter a record ID or cryptographic hash to verify
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Verification QR Modal -->
+    <div id="verifyQrModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h3 id="verifyQrTitle">Verification QR Code</h3>
+                <button class="modal-close" onclick="document.getElementById('verifyQrModal').style.display='none'">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div id="verifyQrContainer" style="display: flex; justify-content: center; margin-bottom: 1rem;"></div>
+                <p id="verifyQrSubtitle" style="font-size: 0.85rem; color: var(--text-secondary);"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>CryptaCore</h4>
+                    <p>Blockchain Trust Layer for Digital Records</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html#home">Home</a></li>
+                        <li><a href="verify.html">Verify Certificate</a></li>
+                        <li><a href="admin.html">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: info@cryptacore.com</p>
+                    <p>Built for SIH 2026</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 CryptaCore. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="verify-script.js"></script>
+</body>
+</html>

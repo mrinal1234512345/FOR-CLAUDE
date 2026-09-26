@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptaCore - Blockchain Trust Layer for Digital Records</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <img src="logo.svg" alt="CryptaCore Logo" class="navbar-logo">
+                <span>CryptaCore</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#problem" class="nav-link">Problem</a>
+                <a href="#solution" class="nav-link">Solution</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#benefits" class="nav-link">Benefits</a>
+                <a href="#demo" class="nav-link">Try Demo</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="logo-full.svg" alt="CryptaCore Logo" class="hero-logo" style="max-width: 280px; margin: 0 auto 1rem;">
+                <h1>CryptaCore</h1>
+                <h2>A Trust Layer for Real-World Digital Records</h2>
+                <p>Secure, verifiable, and tamper-evident blockchain platform for certificates, credentials, and digital ownership</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="scrollTo('demo')">Try Live Demo</button>
+                    <button class="btn btn-secondary" onclick="scrollTo('solution')">Learn More</button>
+                </div>
+            </div>
+            <div class="hero-illustration">
+                <div class="blockchain-visual">
+                    <div class="block"></div>
+                    <div class="block"></div>
+                    <div class="block"></div>
+                    <div class="connector"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="problem section">
+        <div class="container">
+            <h2>The Problem</h2>
+            <p class="section-subtitle">Digital Records Face Trust Challenges</p>
+            
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Lack of Trust</h3>
+                    <p>Digital credentials and certificates can be easily forged or manipulated without verification mechanisms.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Manual Verification</h3>
+                    <p>Institutions waste time manually verifying authenticity of documents from students and applicants.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-lock-open"></i>
+                    <h3>No Ownership Record</h3>
+                    <p>Digital assets lack clear ownership history and transfer mechanisms, leading to disputes.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-ban"></i>
+                    <h3>Fraud & Counterfeits</h3>
+                    <p>Supply chains, licenses, and certificates suffer from fraudulent duplicates and unauthorized copies.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-eye-slash"></i>
+                    <h3>Limited Transparency</h3>
+                    <p>No clear audit trails for credential issuance, transfers, or revocations in distributed systems.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-network-wired"></i>
+                    <h3>Fragmented Systems</h3>
+                    <p>Multiple institutions can't easily verify records across different platforms and databases.</p>
+                </div>
+            </div>
+        </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="solution section">
+        <div class="container">
+            <h2>The Solution: CryptaCore</h2>
+            <p class="section-subtitle">Blockchain-Powered Verification & Trust</p>
+            
+            <div class="solution-content">
+                <div class="solution-text">
+                    <h3>What is CryptaCore?</h3>
+                    <p>CryptaCore is a blockchain-based platform that transforms traditional digital records into tamper-evident, verifiable assets with complete ownership history and cryptographic proof.</p>
+                    
+                    <ul class="features-list">
+                        <li><strong>Tamper-Evident Blockchain:</strong> Records are immutably stored with cryptographic hashing</li>
+                        <li><strong>Smart Contract Automation:</strong> Automated verification, approvals, and transfers</li>
+                        <li><strong>Digital Ownership:</strong> Clear chain of custody and transfer history</li>
+                        <li><strong>Wallet Authentication:</strong> Secure identity verification via cryptographic wallets</li>
+                        <li><strong>IPFS Integration:</strong> Decentralized storage for large documents</li>
+                        <li><strong>Role-Based Access:</strong> Granular permissions for different stakeholders</li>
+                    </ul>
+                </div>
+                <div class="solution-visual">
+                    <div class="blockchain-diagram">
+                        <div class="diagram-header">Blockchain Architecture</div>
+                        <div class="blocks-container">
+                            <div class="block-item">
+                                <div class="block-hash">0x7a2c...</div>
+                                <div class="block-data">Record Hash</div>
+                                <div class="block-timestamp">2026-09-01</div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="block-item">
+                                <div class="block-hash">0xf4d1...</div>
+                                <div class="block-data">Record Hash</div>
+                                <div class="block-timestamp">2026-09-02</div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="block-item">
+                                <div class="block-hash">0xb3e9...</div>
+                                <div class="block-data">Record Hash</div>
+                                <div class="block-timestamp">2026-09-03</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+                            Each record is cryptographically linked. Tampering breaks the chain.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works section">
+        <div class="container">
+            <h2>How It Works</h2>
+            <p class="section-subtitle">4-Step Process</p>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Register Record</h3>
+                    <p>User or institution submits a digital record (certificate, credential, license, etc.) to the CryptaCore platform.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Create Hash & Proof</h3>
+                    <p>The system generates a cryptographic hash of the record and stores IPFS reference on-chain, creating immutable proof.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Execute Smart Contract</h3>
+                    <p>Smart contracts automate verification, approvals, and permissions based on predefined rules and signatures.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Verify Anytime</h3>
+                    <p>Anyone can instantly verify the record's authenticity, ownership history, and validity using the blockchain.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-stack">
+                <h3>Technology Stack</h3>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <i class="fas fa-code"></i>
+                        <span>Frontend: React.js / Vite</span>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-server"></i>
+                        <span>Backend: Node.js + Express</span>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-cube"></i>
+                        <span>Blockchain: Ethereum / Hyperledger</span>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Smart Contracts: Solidity</span>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-database"></i>
+                        <span>Storage: IPFS / Decentralized</span>
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security: Wallet Auth + RBAC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features section">
+        <div class="container">
+            <h2>Key Features</h2>
+            <p class="section-subtitle">Everything You Need for Secure Digital Records</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3>Immutable Records</h3>
+                    <p>Once registered, records cannot be modified or deleted, ensuring integrity and preventing fraud.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>Complete History</h3>
+                    <p>Track every transaction, transfer, and change in ownership with full audit trails on the blockchain.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Smart Contracts</h3>
+                    <p>Automate complex workflows like multi-party approvals, conditional transfers, and timed releases.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Role-Based Access</h3>
+                    <p>Grant specific permissions to different stakeholders: viewers, editors, approvers, and administrators.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Easy Sharing</h3>
+                    <p>Share verifiable proof of credentials with employers, institutions, or partners instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Cross-Chain</h3>
+                    <p>Works across multiple blockchain networks, ensuring compatibility and interoperability.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Ready</h3>
+                    <p>Access and verify records on any device with responsive web and mobile applications.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h3>Real-Time Sync</h3>
+                    <p>Instant updates across the network ensure all parties have the latest verified information.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="benefits section">
+        <div class="container">
+            <h2>Who Benefits?</h2>
+            <p class="section-subtitle">Impact Across Industries</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Students & Graduates</h3>
+                    <ul>
+                        <li>Instantly prove credentials to employers</li>
+                        <li>No more manual verification delays</li>
+                        <li>Own and control your digital portfolio</li>
+                        <li>Share proof without revealing full records</li>
+                    </ul>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3>Institutions & Universities</h3>
+                    <ul>
+                        <li>Reduce fraud and fake certificates</li>
+                        <li>Automate verification with smart contracts</li>
+                        <li>Build trust and credibility</li>
+                        <li>Decrease manual workload by 80%+</li>
+                    </ul>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Businesses & Employers</h3>
+                    <ul>
+                        <li>Verify employee credentials instantly</li>
+                        <li>Reduce hiring fraud and misrepresentation</li>
+                        <li>Improve supply chain transparency</li>
+                        <li>Ensure compliance and audit trails</li>
+                    </ul>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3>Government & Regulators</h3>
+                    <ul>
+                        <li>Transparent and immutable records</li>
+                        <li>Real-time compliance monitoring</li>
+                        <li>Reduced fraud in licensing and permits</li>
+                        <li>Enhanced citizen trust in systems</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo Section -->
+    <section id="demo" class="demo section">
+        <div class="container">
+            <h2>Try It Live</h2>
+            <p class="section-subtitle">Interact with CryptaCore</p>
+            
+            <div class="demo-container">
+                <div class="demo-panel">
+                    <div class="demo-header">
+                        <h3>Register a Digital Record</h3>
+                        <button type="button" id="connectWalletBtn" class="btn btn-secondary" style="padding: 0.7rem 1rem; font-size: 0.8rem;">Connect Wallet</button>
+                    </div>
+                    <div id="blockchainStatus" class="network-status" style="margin-bottom: 1rem; color: #475569; font-size: 0.9rem;">
+                        Demo mode: browser storage enabled. Connect MetaMask to use Sepolia blockchain.
+                    </div>
+                    
+                    <form id="recordForm" class="demo-form">
+                        <div class="form-group">
+                            <label for="recordType">Record Type:</label>
+                            <select id="recordType" required>
+                                <option value="">Select a type...</option>
+                                <option value="certificate">Certificate</option>
+                                <option value="credential">Professional Credential</option>
+                                <option value="license">License</option>
+                                <option value="ownership">Digital Ownership</option>
+                                <option value="supply">Supply Chain Record</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="recipientName">Recipient Name:</label>
+                            <input type="text" id="recipientName" placeholder="John Doe" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="issuerName">Issuer/Organization:</label>
+                            <input type="text" id="issuerName" placeholder="MIT / Google / Government" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="recordDetails">Record Details:</label>
+                            <textarea id="recordDetails" placeholder="Description of the record..." rows="4" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Create & Hash Record</button>
+                    </form>
+                </div>
+                
+                <div class="demo-panel">
+                    <div class="demo-header">
+                        <h3>Blockchain Verification</h3>
+                    </div>
+                    <div id="demoOutput" class="demo-output">
+                        <p class="placeholder-text">Submit a record above to see blockchain hash...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="verification-section">
+                <h3>Verify a Record</h3>
+                <p style="margin-bottom: 1rem; color: #666; font-size: 0.95rem;">
+                    ℹ️ <strong>Enter the record hash from a registered record above.</strong> Only exact matches will verify as valid.
+                </p>
+                <div class="verify-container">
+                    <input type="text" id="verifyHash" placeholder="Enter blockchain hash (e.g., 0x7a2c...)" class="verify-input">
+                    <button class="btn btn-secondary" onclick="verifyRecord()">Verify Hash</button>
+                </div>
+                <div id="verifyOutput" class="verify-output"></div>
+                
+                <div class="info" style="margin-top: 1.5rem;">
+                    <strong>💡 Pro Tip:</strong> Open browser DevTools (Press F12) and run this command in Console:
+                    <div class="code-block" style="margin-top: 0.5rem; background: #1e293b; color: #10b981; padding: 0.8rem; font-family: monospace; font-size: 0.85rem; border-radius: 4px;">
+viewRegisteredRecords()
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">This will show all your registered record hashes for testing verification.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+        <div class="container">
+            <h2>Get Started</h2>
+            <p class="section-subtitle">Connect with the CryptaCore Team</p>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <i class="fas fa-envelope"></i>
+                        <h4>Email</h4>
+                        <p><a href="mailto:team@cryptacore.io">team@cryptacore.io</a></p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h4>Location</h4>
+                        <p>Smart India Hackathon 2026</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-github"></i>
+                        <h4>GitHub</h4>
+                        <p><a href="https://github.com/cryptacore" target="_blank">github.com/cryptacore</a></p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-file-pdf"></i>
+                        <h4>Documentation</h4>
+                        <p><a href="#docs">Read Full Docs</a></p>
+                    </div>
+                </div>
+                
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Your Message..." rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>CryptaCore</h4>
+                    <p>Building trust in digital records through blockchain technology</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#solution">Solution</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#demo">Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#docs">Documentation</a></li>
+                        <li><a href="#api">API Reference</a></li>
+                        <li><a href="#github">GitHub</a></li>
+                        <li><a href="#contact">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 CryptaCore. Smart India Hackathon 2026. All rights reserved.</p>
+                <p>Problem Statement ID: SIH26194 | Theme: Blockchain & Cybersecurity</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

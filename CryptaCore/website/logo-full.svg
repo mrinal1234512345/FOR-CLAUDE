@@ -1,0 +1,30 @@
+<svg viewBox="0 0 380 150" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield Icon -->
+  <path d="M 30 40 L 30 70 Q 30 95 50 110 Q 70 95 70 70 L 70 40 Z" 
+        fill="url(#grad1)" stroke="white" stroke-width="2"/>
+  
+  <!-- Chain Links -->
+  <circle cx="40" cy="70" r="4" fill="white"/>
+  <line x1="44" y1="70" x2="56" y2="70" stroke="white" stroke-width="2"/>
+  <circle cx="60" cy="70" r="4" fill="white"/>
+  
+  <!-- Checkmark -->
+  <path d="M 35 82 L 45 92 L 65 72" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Text: CryptaCore -->
+  <text x="95" y="85" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#1e40af" letter-spacing="-1">
+    CryptaCore
+  </text>
+  
+  <!-- Tagline -->
+  <text x="95" y="115" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb" letter-spacing="1">
+    BLOCKCHAIN TRUST LAYER
+  </text>
+</svg>

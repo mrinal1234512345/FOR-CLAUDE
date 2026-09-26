@@ -1,0 +1,14 @@
+[
+  {
+    "username": "system-admin",
+    "organization": "System Administrator",
+    "salt": "ff9ad44c8b9452939aeb053c41109e96",
+    "hash": "2f5ef5e3a76081229e7a318053bb12c14bda32189dcca0d9a89e600a4ebc5c5615ef21ee5be8af85b7cc158275f0a83680e75e8790c2702be529f5045ba962ab"
+  },
+  {
+    "username": "abc-university",
+    "organization": "ABC University",
+    "salt": "bc1deaad527b7520846413b6e1af010e",
+    "hash": "fe20bcb3cb3c6c1b26705e1f5ad5aca74c46b5892517211c57b9c6d24052e9e0b265729defb525133a96d02f70a56d605910cea40b7299c61c3bab53d5587d61"
+  }
+]

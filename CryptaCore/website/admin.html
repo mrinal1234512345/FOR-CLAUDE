@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptaCore - Certificate Authority & Admin Portal</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Web3 & Utilities -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+    <!-- CryptaCore Shared Architecture Engine -->
+    <script type="module" src="cryptacore-core.js"></script>
+</head>
+
+<body class="admin-body">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="index.html" class="brand-link">
+                    <img src="logo.svg" alt="CryptaCore Logo" class="navbar-logo">
+                    <div class="brand-text">
+                        <span class="brand-name">CryptaCore</span>
+                        <span class="brand-badge">ADMIN CONSOLE</span>
+                    </div>
+                </a>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="verify.html" class="nav-link"><i class="fas fa-check-double"></i> Verify Portal</a>
+                <a href="admin.html" class="nav-link active"><i class="fas fa-shield-alt"></i> Admin Portal</a>
+                <a href="QUICKSTART.html" class="nav-link"><i class="fas fa-book-open"></i> Quick Start</a>
+            </div>
+            <div class="nav-actions">
+                <!-- Role-Based Access Control Switcher -->
+                <div class="role-pill" id="rolePill" title="Active CryptaCore Role">
+                    <i class="fas fa-user-shield text-primary"></i>
+                    <span style="font-weight: 600; color: var(--text-secondary); font-size: 0.78rem;">Role:</span>
+                    <select id="roleSelector" class="role-select-native" aria-label="Select User Role">
+                        <option value="ADMIN" selected>Admin (Full Control)</option>
+                        <option value="ISSUER">Issuer Authority</option>
+                        <option value="HOLDER">Holder (My Records)</option>
+                        <option value="VERIFIER">Public Verifier</option>
+                        <option value="SUPPLY_CHAIN_PARTNER">Supply Chain Partner</option>
+                    </select>
+                </div>
+                <div class="wallet-pill" id="walletStatusPill" title="Blockchain Connection Status">
+                    <span class="status-dot disconnected" id="walletStatusDot"></span>
+                    <span class="wallet-text" id="walletStatusText">Demo Mode</span>
+                    <button class="btn-connect-wallet" id="connectWalletBtn" type="button">Connect Wallet</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="Toggle dark / light mode"
+                    aria-label="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Main Container -->
+    <main class="admin-main">
+        <div class="container">
+            <!-- Header & Stats Section -->
+            <header class="admin-header">
+                <div class="header-content">
+                    <div class="header-titles">
+                        <span class="section-tag"><i class="fas fa-university"></i> Institutional Certificate
+                            Authority</span>
+                        <h1>Certificate Issuance & Management</h1>
+                        <p>Upload credentials, compute cryptographic SHA-256 proofs, anchor immutable records to
+                            blockchain, and generate verifiable digital assets.</p>
+                    </div>
+                    <div class="header-network-info">
+                        <div class="network-badge" id="currentNetworkBadge">
+                            <i class="fas fa-cube"></i> <span id="networkNameText">Network: Local / Sepolia
+                                Simulation</span>
+                        </div>
+                        <div class="contract-badge" id="contractAddressBadge" title="Click to copy contract address">
+                            <i class="fas fa-file-contract"></i> Contract: <code
+                                id="contractAddressDisplay">0x1cB0...666</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Stats Grid -->
+                <div class="admin-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-blue"><i class="fas fa-award"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Issued</span>
+                            <span class="stat-value" id="statTotalIssued">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-green"><i class="fas fa-link"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Blockchain Anchored</span>
+                            <span class="stat-value" id="statAnchored">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-emerald"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Active & Valid</span>
+                            <span class="stat-value" id="statValid">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-amber"><i class="fas fa-ban"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Revoked / Expired</span>
+                            <span class="stat-value" id="statRevoked">0</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Navigation Tabs -->
+            <div class="admin-tabs-nav" id="adminMainTabs">
+                <button class="tab-btn active" data-tab="overview-tab">
+                    <i class="fas fa-chart-pie"></i> Overview Dashboard
+                </button>
+                <button class="tab-btn" data-tab="licenses-tab">
+                    <i class="fas fa-id-card"></i> License Portal <span class="tab-badge" id="licensesCountBadge">0</span>
+                </button>
+                <button class="tab-btn" data-tab="credentials-tab">
+                    <i class="fas fa-user-check"></i> Professional Credentials <span class="tab-badge" id="credentialsCountBadge">0</span>
+                </button>
+                <button class="tab-btn" data-tab="ownership-tab">
+                    <i class="fas fa-arrows-split-up-and-left"></i> Digital Ownership <span class="tab-badge" id="assetsCountBadge">0</span>
+                </button>
+                <button class="tab-btn" data-tab="supply-chain-tab">
+                    <i class="fas fa-truck-ramp-box"></i> Supply Chain <span class="tab-badge" id="supplyChainCountBadge">0</span>
+                </button>
+                <button class="tab-btn" data-tab="single-upload-tab">
+                    <i class="fas fa-file-signature"></i> Certificate Issuance
+                </button>
+                <button class="tab-btn" data-tab="batch-upload-tab">
+                    <i class="fas fa-layer-group"></i> Batch Upload
+                </button>
+                <button class="tab-btn" data-tab="registry-tab">
+                    <i class="fas fa-table-list"></i> Certificate Ledger <span class="tab-badge" id="registryCountBadge">0</span>
+                </button>
+            </div>
+
+            <!-- TAB 0: Overview Dashboard -->
+            <section class="admin-tab-content active" id="overview-tab">
+                <!-- Summary Metrics Grid -->
+                <div class="dashboard-stats-grid">
+                    <div class="dash-card">
+                        <div class="dash-icon icon-blue"><i class="fas fa-database"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">Total Records</span>
+                            <span class="dash-val" id="dashStatTotal">0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon icon-emerald"><i class="fas fa-id-card"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">Active Licenses</span>
+                            <span class="dash-val" id="dashStatLicenses">0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon icon-purple"><i class="fas fa-user-check"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">Credentials</span>
+                            <span class="dash-val" id="dashStatCredentials">0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon icon-cyan"><i class="fas fa-layer-group"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">Digital Assets</span>
+                            <span class="dash-val" id="dashStatAssets">0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon icon-amber"><i class="fas fa-truck-fast"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">Supply Chain</span>
+                            <span class="dash-val" id="dashStatSupplyChain">0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon icon-red"><i class="fas fa-ban"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">Revoked / Inactive</span>
+                            <span class="dash-val" id="dashStatRevoked">0</span>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon icon-blue"><i class="fas fa-magnifying-glass-chart"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">Verification Lookups</span>
+                            <span class="dash-val" id="dashStatVerifications">142</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-criteria Filter Toolbar -->
+                <div class="filter-toolbar">
+                    <div class="filter-search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="dashSearchInput" placeholder="Search across all record types, IDs, holders, or hashes...">
+                    </div>
+                    <select id="dashTypeFilter" class="filter-select">
+                        <option value="ALL">All Record Types</option>
+                        <option value="LICENSE">Licenses</option>
+                        <option value="CREDENTIAL">Professional Credentials</option>
+                        <option value="DIGITAL_ASSET">Digital Assets</option>
+                        <option value="SUPPLY_CHAIN">Supply Chain Records</option>
+                        <option value="CERTIFICATE">Certificates</option>
+                    </select>
+                    <select id="dashStatusFilter" class="filter-select">
+                        <option value="ALL">All Statuses</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="REVOKED">Revoked</option>
+                        <option value="EXPIRED">Expired</option>
+                        <option value="TRANSFERRED">Transferred</option>
+                        <option value="DELIVERED">Delivered</option>
+                    </select>
+                    <button class="btn btn-secondary btn-sm" id="btnResetDashFilters" type="button"><i class="fas fa-rotate-left"></i> Reset</button>
+                </div>
+
+                <!-- Dashboard Content Split: Unified Records + Recent Activity -->
+                <div class="dashboard-content-split">
+                    <!-- Left: Unified Records Table -->
+                    <div class="card-surface" style="padding: 1.5rem;">
+                        <div class="module-header-row" style="margin-bottom: 1rem;">
+                            <div class="module-title-group">
+                                <h3><i class="fas fa-list-check text-primary"></i> Unified CryptaCore Ledger</h3>
+                                <p>Comprehensive multi-tenant registry anchored with cryptographic SHA-256 proofs</p>
+                            </div>
+                            <span class="tab-badge" id="dashFilteredCount">0 records</span>
+                        </div>
+
+                        <div class="crypta-table-container">
+                            <table class="crypta-table">
+                                <thead>
+                                    <tr>
+                                        <th>Record ID</th>
+                                        <th>Type</th>
+                                        <th>Title / Description</th>
+                                        <th>Holder / Custodian</th>
+                                        <th>Status</th>
+                                        <th>Proof / Timestamp</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashRecordsTableBody">
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                                            <i class="fas fa-spinner fa-spin"></i> Loading unified CryptaCore records...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Chronological Activity Feed -->
+                    <div class="card-surface" style="padding: 1.5rem;">
+                        <div class="module-header-row" style="margin-bottom: 1rem;">
+                            <div class="module-title-group">
+                                <h3><i class="fas fa-clock-rotate-left text-primary"></i> Recent Activity</h3>
+                                <p>Live audit trail of platform events</p>
+                            </div>
+                        </div>
+
+                        <div id="dashActivityFeed" style="display: flex; flex-direction: column; gap: 0.85rem; max-height: 520px; overflow-y: auto;">
+                            <!-- Injected via JavaScript -->
+                        </div>
+
+                        <!-- Quick Action Shortcuts -->
+                        <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                            <strong style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 0.6rem;">Quick Actions</strong>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                <button class="btn btn-outline btn-sm" onclick="switchAdminTab('licenses-tab'); document.getElementById('btnOpenIssueLicenseModal')?.click();">
+                                    <i class="fas fa-plus"></i> New License
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="switchAdminTab('credentials-tab'); document.getElementById('btnOpenIssueCredentialModal')?.click();">
+                                    <i class="fas fa-plus"></i> New Credential
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="switchAdminTab('ownership-tab'); document.getElementById('btnOpenRegisterAssetModal')?.click();">
+                                    <i class="fas fa-plus"></i> Register Asset
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="switchAdminTab('supply-chain-tab'); document.getElementById('btnOpenAddSupplyEventModal')?.click();">
+                                    <i class="fas fa-plus"></i> Log Milestone
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 1: License Management Portal -->
+            <section class="admin-tab-content" id="licenses-tab">
+                <div class="card-surface" style="padding: 1.5rem;">
+                    <div class="module-header-row">
+                        <div class="module-title-group">
+                            <h2><i class="fas fa-id-card text-emerald"></i> License Management Portal</h2>
+                            <p>Issue, monitor, renew, and revoke institutional operating licenses, permits, and professional accreditations.</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btnOpenIssueLicenseModal">
+                            <i class="fas fa-plus-circle"></i> Issue New License
+                        </button>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="filter-toolbar">
+                        <div class="filter-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="licenseSearchInput" placeholder="Search by license ID, number, holder name, or authority...">
+                        </div>
+                        <select id="licenseStatusFilter" class="filter-select">
+                            <option value="ALL">All Statuses</option>
+                            <option value="ACTIVE">Active Only</option>
+                            <option value="REVOKED">Revoked</option>
+                            <option value="EXPIRED">Expired</option>
+                        </select>
+                        <select id="licenseTypeFilter" class="filter-select">
+                            <option value="ALL">All License Types</option>
+                            <option value="Commercial Drone">Drone / UAS Pilot</option>
+                            <option value="Crypto Custody">FinTech / Crypto</option>
+                            <option value="Medical Practice">Medical & Clinical</option>
+                            <option value="Aviation">Civil Aviation</option>
+                        </select>
+                    </div>
+
+                    <!-- Licenses Table -->
+                    <div class="crypta-table-container">
+                        <table class="crypta-table">
+                            <thead>
+                                <tr>
+                                    <th>License ID</th>
+                                    <th>License Number & Type</th>
+                                    <th>Licensee / Holder</th>
+                                    <th>Issuing Authority</th>
+                                    <th>Status</th>
+                                    <th>Validity Expiry</th>
+                                    <th>Blockchain Proof</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="licensesTableBody">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: Professional Credential Portal -->
+            <section class="admin-tab-content" id="credentials-tab">
+                <div class="card-surface" style="padding: 1.5rem;">
+                    <div class="module-header-row">
+                        <div class="module-title-group">
+                            <h2><i class="fas fa-user-check text-purple"></i> Professional Credential Portal</h2>
+                            <p>Issue verifiable accreditations, skill badges, and professional certifications with selective sharing.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline" id="btnToggleHolderView">
+                                <i class="fas fa-user-graduate"></i> My Credentials (Holder View)
+                            </button>
+                            <button type="button" class="btn btn-primary" id="btnOpenIssueCredentialModal">
+                                <i class="fas fa-award"></i> Issue Credential
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="filter-toolbar">
+                        <div class="filter-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="credentialSearchInput" placeholder="Search by credential ID, holder, profession, skill, or issuer...">
+                        </div>
+                        <select id="credentialStatusFilter" class="filter-select">
+                            <option value="ALL">All Statuses</option>
+                            <option value="ACTIVE">Active Only</option>
+                            <option value="REVOKED">Revoked</option>
+                            <option value="EXPIRED">Expired</option>
+                        </select>
+                    </div>
+
+                    <!-- Credentials Table -->
+                    <div class="crypta-table-container">
+                        <table class="crypta-table">
+                            <thead>
+                                <tr>
+                                    <th>Credential ID</th>
+                                    <th>Credential Title</th>
+                                    <th>Holder / Candidate</th>
+                                    <th>Profession & Skills</th>
+                                    <th>Issuing Organization</th>
+                                    <th>Status</th>
+                                    <th>Expiry</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="credentialsTableBody">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: Digital Ownership Portal -->
+            <section class="admin-tab-content" id="ownership-tab">
+                <div class="card-surface" style="padding: 1.5rem;">
+                    <div class="module-header-row">
+                        <div class="module-title-group">
+                            <h2><i class="fas fa-arrows-split-up-and-left text-cyan"></i> Digital Ownership Portal</h2>
+                            <p>Register tokenized assets, patents, deeds, and execute cryptographic title transfers with visual custody chains.</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btnOpenRegisterAssetModal">
+                            <i class="fas fa-gem"></i> Register Digital Asset
+                        </button>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="filter-toolbar">
+                        <div class="filter-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="assetSearchInput" placeholder="Search digital assets by ID, name, creator, or current owner...">
+                        </div>
+                    </div>
+
+                    <!-- Assets Table -->
+                    <div class="crypta-table-container">
+                        <table class="crypta-table">
+                            <thead>
+                                <tr>
+                                    <th>Asset ID</th>
+                                    <th>Asset Name & Classification</th>
+                                    <th>Current Owner</th>
+                                    <th>Original Creator</th>
+                                    <th>Status</th>
+                                    <th>Creation Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assetsTableBody">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Visual Ownership Timeline Display Card -->
+                    <div class="card-surface" id="ownershipTimelineCard" style="margin-top: 1.5rem; padding: 1.5rem; display: none;">
+                        <div class="module-header-row" style="margin-bottom: 0.5rem;">
+                            <div class="module-title-group">
+                                <h3><i class="fas fa-timeline text-primary"></i> Chain of Custody & Ownership History</h3>
+                                <p id="ownershipTimelineAssetTitle">Select an asset above to inspect its cryptographic ownership chain.</p>
+                            </div>
+                        </div>
+                        <div id="ownershipTimelineBody"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: Supply Chain Record Portal -->
+            <section class="admin-tab-content" id="supply-chain-tab">
+                <div class="card-surface" style="padding: 1.5rem;">
+                    <div class="module-header-row">
+                        <div class="module-title-group">
+                            <h2><i class="fas fa-truck-ramp-box text-amber"></i> Supply Chain Record Portal</h2>
+                            <p>Track product lots through 7 verifiable milestones: Manufactured, Quality Checked, Packed, Shipped, Received, Inspected, Delivered.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline" id="btnOpenAddSupplyEventModal">
+                                <i class="fas fa-clipboard-check"></i> Append Milestone Event
+                            </button>
+                            <button type="button" class="btn btn-primary" id="btnOpenRegisterProductModal">
+                                <i class="fas fa-box-archive"></i> Register Product / Batch
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Track Product Quick-Lookup Bar -->
+                    <div class="filter-toolbar" style="background: rgba(6, 182, 212, 0.06); border-color: rgba(6, 182, 212, 0.3);">
+                        <div class="filter-search-box" style="flex: 2;">
+                            <i class="fas fa-barcode"></i>
+                            <input type="text" id="trackProductInput" placeholder="Enter Product ID (e.g. PRD-2026-001) or scan barcode/QR to track chain of custody...">
+                        </div>
+                        <button class="btn btn-primary" id="btnTrackProduct" type="button"><i class="fas fa-location-crosshairs"></i> Track Provenance</button>
+                    </div>
+
+                    <!-- Supply Chain Visual Stepper Card -->
+                    <div class="card-surface" id="supplyChainStepperCard" style="margin-bottom: 1.5rem; padding: 1.5rem; display: none; border-left: 6px solid #06b6d4;">
+                        <div class="module-header-row" style="margin-bottom: 0.5rem;">
+                            <div class="module-title-group">
+                                <h3 id="stepperProductTitle"><i class="fas fa-route text-cyan"></i> Provenance Tracking</h3>
+                                <p id="stepperProductSubtitle">Complete custody chain across international checkpoints</p>
+                            </div>
+                        </div>
+                        <div id="supplyChainStepperDisplay"></div>
+                        <div id="supplyChainMilestoneLogs" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- Products Table -->
+                    <div class="crypta-table-container">
+                        <table class="crypta-table">
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Product / Batch Details</th>
+                                    <th>Manufacturer & Origin</th>
+                                    <th>Current Location</th>
+                                    <th>Current Owner</th>
+                                    <th>Active Milestone</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="supplyChainTableBody">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: Single Certificate Issuance -->
+            <section class="admin-tab-content" id="single-upload-tab">
+                <div class="issuance-workspace-grid">
+                    <!-- Left: Upload & Data Entry Form -->
+                    <div class="form-column card-surface">
+                        <div class="column-header">
+                            <h2><i class="fas fa-feather-alt"></i> Certificate Metadata & Upload</h2>
+                            <button type="button" class="btn-sample-data" id="btnFillSampleData"
+                                title="Auto-fill form with sample student credential">
+                                <i class="fas fa-magic"></i> Auto-Fill Sample
+                            </button>
+                        </div>
+
+                        <form id="certificateIssuanceForm" class="credential-form">
+                            <!-- Document File Upload Dropzone -->
+                            <div class="form-section-title"><i class="fas fa-file-upload"></i> 1. Original Document
+                                Upload & Cryptographic Analysis</div>
+                            <div class="dropzone" id="fileDropzone">
+                                <input type="file" id="certFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp"
+                                    class="file-input-hidden">
+                                <div class="dropzone-inner" id="dropzoneContent">
+                                    <div class="dropzone-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                                    <div class="dropzone-text">
+                                        <strong>Drag & drop certificate document</strong> or <span
+                                            class="browse-link">browse files</span>
+                                    </div>
+                                    <div class="dropzone-hint">Supports PDF, PNG, JPG, WEBP (Max 25MB) • Auto-calculates
+                                        SHA-256 cryptographic digest</div>
+                                </div>
+                                <div class="file-preview-card" id="filePreviewCard" style="display: none;">
+                                    <div class="hash-diagnostic-header">
+                                        <div class="file-main-info">
+                                            <div class="file-preview-icon"><i class="fas fa-file-pdf"
+                                                    id="filePreviewTypeIcon"></i></div>
+                                            <div class="file-preview-details">
+                                                <div class="file-title-row">
+                                                    <span class="file-name" id="previewFileName">certificate.pdf</span>
+                                                    <span class="file-badge-verified" id="hashStatusBadge"><i
+                                                            class="fas fa-check-circle"></i> SHA-256 DIGESTED</span>
+                                                </div>
+                                                <span class="file-meta" id="previewFileMeta">1.2 MB • application/pdf •
+                                                    1,248,390 bytes</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-remove-file" id="btnRemoveFile"
+                                            title="Remove file"><i class="fas fa-times"></i></button>
+                                    </div>
+
+                                    <!-- Hashing Benchmark & Progress -->
+                                    <div class="hash-benchmark-bar">
+                                        <div class="hash-progress-track">
+                                            <div class="hash-progress-fill" id="hashProgressFill" style="width: 100%;">
+                                            </div>
+                                        </div>
+                                        <div class="hash-speed-info">
+                                            <span><i class="fas fa-bolt"></i> Engine: Native Web Crypto Subtlety
+                                                API</span>
+                                            <span id="hashCalcTimeText"><i class="fas fa-stopwatch"></i> Calculated in
+                                                6.2 ms</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- SHA-256 Hex Digest Display -->
+                                    <div class="hash-digest-box">
+                                        <div class="hash-digest-header">
+                                            <span class="hash-algo-label"><i class="fas fa-fingerprint"></i> SHA-256
+                                                Hash Digest (256-bit / 32-byte)</span>
+                                            <button type="button" class="btn-copy-hash" id="btnCopyFileHash"
+                                                title="Copy full 64-char SHA-256 hex">
+                                                <i class="fas fa-copy"></i> Copy Hash
+                                            </button>
+                                        </div>
+                                        <div class="hash-code-display" id="previewFileHashFull">
+                                            0x0000000000000000000000000000000000000000000000000000000000000000</div>
+                                    </div>
+
+                                    <!-- Multi-Algorithm Breakdown Grid -->
+                                    <div class="multi-hash-grid">
+                                        <div class="hash-chip">
+                                            <span class="chip-label">Keccak-256 (EVM):</span>
+                                            <code class="chip-val" id="previewKeccakHash">0x0000...</code>
+                                        </div>
+                                        <div class="hash-chip">
+                                            <span class="chip-label">File Checksum (CRC32):</span>
+                                            <code class="chip-val" id="previewCrcHash">0x00000000</code>
+                                        </div>
+                                    </div>
+
+                                    <!-- Live Checksum / Tamper Detection Matcher -->
+                                    <div class="checksum-matcher-section">
+                                        <div class="matcher-title"><i class="fas fa-shield-virus"></i> Tamper-Detection
+                                            & Checksum Matcher</div>
+                                        <div class="matcher-input-row">
+                                            <input type="text" id="expectedHashInput"
+                                                placeholder="Paste expected SHA-256 hash to verify file integrity...">
+                                            <button type="button" class="btn btn-outline btn-sm"
+                                                id="btnVerifyChecksum"><i class="fas fa-microscope"></i> Verify
+                                                Integrity</button>
+                                        </div>
+                                        <div class="matcher-result" id="checksumResultAlert" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recipient Identity Details -->
+                            <div class="form-section-title"><i class="fas fa-user-graduate"></i> 2. Recipient & Student
+                                Identity</div>
+
+                            <div class="form-row-3">
+                                <div class="form-group" style="max-width: 140px;">
+                                    <label for="namePrefixSelect">Prefix</label>
+                                    <select id="namePrefixSelect">
+                                        <option value="">None</option>
+                                        <option value="Mr.">Mr.</option>
+                                        <option value="Ms.">Ms.</option>
+                                        <option value="Dr.">Dr.</option>
+                                        <option value="Prof.">Prof.</option>
+                                        <option value="Eng.">Eng.</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex: 2;">
+                                    <label for="holderNameInput">Recipient Full Name <span
+                                            class="required">*</span></label>
+                                    <input type="text" id="holderNameInput" placeholder="e.g. Alex Morgan" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentRollInput">Student Roll / Reg. No.</label>
+                                    <input type="text" id="studentRollInput" placeholder="e.g. 2022-BCS-042">
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="studentIdInput">Certificate Unique ID <span
+                                            class="required">*</span></label>
+                                    <div class="input-with-action">
+                                        <input type="text" id="studentIdInput" placeholder="e.g. CC-2026-7842" required>
+                                        <button type="button" class="btn-input-action" id="btnGenCertId"
+                                            title="Generate Random ID"><i class="fas fa-dice"></i></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipientEmailInput">Recipient Email Address</label>
+                                    <input type="email" id="recipientEmailInput"
+                                        placeholder="e.g. alex.morgan@university.edu">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recipientWalletInput">Recipient Ethereum / Web3 Wallet Address</label>
+                                <div class="input-with-action">
+                                    <input type="text" id="recipientWalletInput"
+                                        placeholder="0x71C8364f3B... (or leave blank to auto-generate)">
+                                    <button type="button" class="btn-input-action" id="btnGenWallet"
+                                        title="Generate New Keypair Address"><i class="fas fa-wallet"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Institutional & Credential Classification -->
+                            <div class="form-section-title"><i class="fas fa-university"></i> 3. Institution & Program
+                                Details</div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="issuerNameInput">Issuing Institution / University <span
+                                            class="required">*</span></label>
+                                    <input type="text" id="issuerNameInput"
+                                        placeholder="e.g. CryptaCore Institute of Technology" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="accreditationInput">Accreditation Body / Code</label>
+                                    <input type="text" id="accreditationInput"
+                                        placeholder="e.g. AICTE / UGC / ISO-9001 / W3C">
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="departmentInput">Faculty / Department</label>
+                                    <input type="text" id="departmentInput"
+                                        placeholder="e.g. Department of Computer Science & Cybersecurity">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cohortYearInput">Academic Cohort / Session</label>
+                                    <input type="text" id="cohortYearInput" placeholder="e.g. 2022 - 2026 Batch">
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="credentialTitleInput">Credential / Degree Title <span
+                                            class="required">*</span></label>
+                                    <input type="text" id="credentialTitleInput"
+                                        placeholder="e.g. Bachelor of Technology in Blockchain Systems" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="credentialTypeSelect">Credential Classification <span
+                                            class="required">*</span></label>
+                                    <select id="credentialTypeSelect" required>
+                                        <option value="Bachelor's Degree">Bachelor's Degree</option>
+                                        <option value="Master's Degree">Master's Degree</option>
+                                        <option value="Doctorate (PhD)">Doctorate (PhD)</option>
+                                        <option value="Professional Certification">Professional Certification</option>
+                                        <option value="Postgraduate Diploma">Postgraduate Diploma</option>
+                                        <option value="Course Completion">Course Completion</option>
+                                        <option value="Government License">Government License</option>
+                                        <option value="Digital Ownership Title">Digital Ownership Title</option>
+                                        <option value="Merit & Excellence Award">Merit & Excellence Award</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Performance, Dates & Signatories -->
+                            <div class="form-section-title"><i class="fas fa-medal"></i> 4. Performance, Dates &
+                                Signatories</div>
+
+                            <div class="form-row-3">
+                                <div class="form-group">
+                                    <label for="gradeInput">Grade / CGPA / Score</label>
+                                    <input type="text" id="gradeInput" placeholder="e.g. Grade A+ / 3.96 GPA">
+                                </div>
+                                <div class="form-group">
+                                    <label for="honorsInput">Honors / Distinction</label>
+                                    <input type="text" id="honorsInput" placeholder="e.g. First Class with Distinction">
+                                </div>
+                                <div class="form-group">
+                                    <label for="issueDateInput">Issue Date <span class="required">*</span></label>
+                                    <input type="date" id="issueDateInput" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="expiryDateInput">Expiry Date</label>
+                                    <input type="date" id="expiryDateInput" disabled>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="noExpiryCheckbox" checked> Lifetime Validity (No
+                                        Expiry)
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sealStyleSelect">Official Seal Style</label>
+                                    <select id="sealStyleSelect">
+                                        <option value="seal-gold">🥇 Gold Hologram Seal</option>
+                                        <option value="seal-shield">🛡️ CryptaCore Shield Emblem</option>
+                                        <option value="seal-amethyst">👑 Royal Amethyst Seal</option>
+                                        <option value="seal-sapphire">💎 Tech Sapphire Seal</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="signatory1Input">Primary Signatory & Title</label>
+                                    <input type="text" id="signatory1Input"
+                                        placeholder="e.g. Dr. Julian Vance - Dean of Academic Affairs">
+                                </div>
+                                <div class="form-group">
+                                    <label for="signatory2Input">Secondary Signatory & Title</label>
+                                    <input type="text" id="signatory2Input"
+                                        placeholder="e.g. Prof. Sarah Jenkins - Vice Chancellor">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="additionalDetailsInput">Specialization, Thesis Title or Cryptographic
+                                    Remarks</label>
+                                <textarea id="additionalDetailsInput" rows="2"
+                                    placeholder="e.g. Major in Smart Contract Auditing. Capstone Thesis: Zero-Knowledge Scalability Protocols..."></textarea>
+                            </div>
+
+                            <!-- Decentralized Storage & Blockchain Parameters -->
+                            <div class="form-section-title"><i class="fas fa-server"></i> 5. Decentralized Storage &
+                                Blockchain Anchor</div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="targetNetworkSelect">Target Blockchain Network</label>
+                                    <select id="targetNetworkSelect">
+                                        <option value="sepolia">Ethereum Sepolia Testnet (EVM)</option>
+                                        <option value="polygon">Polygon Amoy Testnet</option>
+                                        <option value="ganache">Local Ganache Network (1337)</option>
+                                        <option value="hyperledger">Hyperledger Permissioned Ledger</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hashAlgorithmSelect">Hashing Algorithm</label>
+                                    <select id="hashAlgorithmSelect">
+                                        <option value="sha256">SHA-256 (NIST Standard)</option>
+                                        <option value="keccak256">Keccak-256 (Ethereum Native)</option>
+                                        <option value="sha512">SHA-512 (High Entropy)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ipfsUriInput">Decentralized IPFS Storage URI</label>
+                                <div class="input-with-action">
+                                    <input type="text" id="ipfsUriInput" placeholder="ipfs://bafybeicryptacore..."
+                                        readonly>
+                                    <button type="button" class="btn-input-action" id="btnRefreshIpfs"
+                                        title="Generate New IPFS CID"><i class="fas fa-arrows-rotate"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Submit & Reset Actions -->
+                            <div class="form-action-buttons">
+                                <button type="submit" class="btn btn-primary btn-submit-mint" id="btnSubmitMint">
+                                    <i class="fas fa-shield-halved"></i> Register & Anchor to Blockchain
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btnResetForm">
+                                    <i class="fas fa-undo"></i> Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right: Live Dynamic Certificate Preview & Visual Rendering -->
+                    <div class="preview-column">
+                        <div class="preview-header-bar card-surface">
+                            <div class="preview-header-title">
+                                <i class="fas fa-eye"></i>
+                                <span>Live Verifiable Certificate Preview</span>
+                            </div>
+                            <div class="template-selector">
+                                <label for="certThemeSelect">Style:</label>
+                                <select id="certThemeSelect" class="theme-select">
+                                    <option value="theme-gold">Classic Gold Seal</option>
+                                    <option value="theme-cyber">Cyber Blockchain Blue</option>
+                                    <option value="theme-royal">Royal Imperial Purple</option>
+                                    <option value="theme-minimal">Monochrome Tech</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- The Live Dynamic Certificate Card -->
+                        <div class="certificate-canvas-wrapper" id="certCanvasWrapper">
+                            <div class="certificate-render-card theme-gold" id="certificateRenderCard">
+                                <!-- Ornate Borders & Corners -->
+                                <div class="cert-border-outer"></div>
+                                <div class="cert-border-inner"></div>
+                                <div class="cert-corner corner-tl"></div>
+                                <div class="cert-corner corner-tr"></div>
+                                <div class="cert-corner corner-bl"></div>
+                                <div class="cert-corner corner-br"></div>
+
+                                <!-- Watermark Background -->
+                                <div class="cert-watermark">
+                                    <img src="logo.svg" alt="Watermark Logo">
+                                </div>
+
+                                <!-- Certificate Content -->
+                                <div class="cert-content">
+                                    <div class="cert-issuer-header">
+                                        <div class="cert-logo-badge">
+                                            <img src="logo.svg" alt="CryptaCore Seal" class="cert-logo-img">
+                                        </div>
+                                        <h3 class="cert-issuer-name" id="previewIssuerText">CRYPTACORE INSTITUTE OF
+                                            TECHNOLOGY</h3>
+                                        <span class="cert-dept-name" id="previewDeptText">Department of Computer Science
+                                            & Cybersecurity</span>
+                                        <span class="cert-accreditation-tag" id="previewAccreditationText"
+                                            style="display: none;"></span>
+                                    </div>
+
+                                    <div class="cert-banner-text">
+                                        <span class="cert-banner-tag" id="previewTypeTag">OFFICIAL BACHELOR'S
+                                            DEGREE</span>
+                                    </div>
+
+                                    <p class="cert-presented-text">This is to certify with cryptographic immutability
+                                        that</p>
+                                    <h2 class="cert-recipient-name" id="previewRecipientText">Alex Morgan</h2>
+                                    <div class="cert-roll-tag" id="previewRollContainer" style="display: none;">
+                                        <span id="previewRollText">Roll No: 2022-BCS-042</span>
+                                    </div>
+
+                                    <p class="cert-achievement-text">
+                                        has successfully fulfilled all institutional requirements and is hereby awarded
+                                        the credential of
+                                    </p>
+                                    <h4 class="cert-degree-title" id="previewDegreeText">Bachelor of Technology in
+                                        Blockchain Systems</h4>
+
+                                    <div class="cert-grade-badge-row">
+                                        <div class="cert-grade-badge" id="previewGradeContainer">
+                                            <span id="previewGradeText">Grade: Grade A+ / 3.96 GPA</span>
+                                        </div>
+                                        <div class="cert-honors-badge" id="previewHonorsContainer"
+                                            style="display: none;">
+                                            <span id="previewHonorsText">First Class with Distinction</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Certificate Footer: Signatures, Seal, QR Code -->
+                                    <div class="cert-footer-grid">
+                                        <div class="cert-footer-col cert-sig-col">
+                                            <div class="cert-sig-line">
+                                                <span class="sig-script" id="previewSig1Name">Dr. Julian Vance</span>
+                                            </div>
+                                            <span class="sig-label" id="previewSig1Title">Dean of Academic
+                                                Affairs</span>
+                                            <span class="sig-date" id="previewIssueDateText">Issued: September 1,
+                                                2026</span>
+                                        </div>
+
+                                        <div class="cert-footer-col cert-seal-col">
+                                            <div class="cert-gold-seal" id="previewSealElement">
+                                                <div class="seal-inner">
+                                                    <i class="fas fa-shield-check"></i>
+                                                    <span>VERIFIED ON-CHAIN</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="cert-footer-col cert-qr-col">
+                                            <div class="cert-qr-container" id="certPreviewQrBox"
+                                                title="Verification QR Code"></div>
+                                            <span class="qr-label">Scan to Verify</span>
+                                            <code class="qr-cert-id" id="previewCertIdText">ID: CC-2026-7842</code>
+                                        </div>
+                                    </div>
+
+                                    <!-- On-Chain Security Banner -->
+                                    <div class="cert-security-strip">
+                                        <div class="strip-item"><i class="fas fa-lock"></i> SHA-256 Anchored</div>
+                                        <div class="strip-item"><i class="fas fa-cubes"></i> Smart Contract Verified
+                                        </div>
+                                        <div class="strip-item"><i class="fas fa-fingerprint"></i> Tamper-Evident Proof
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview Toolbar -->
+                        <div class="preview-actions-bar card-surface">
+                            <button type="button" class="btn btn-outline" id="btnDownloadCertPng">
+                                <i class="fas fa-file-image"></i> Download PNG Certificate
+                            </button>
+                            <button type="button" class="btn btn-outline" id="btnPrintCert">
+                                <i class="fas fa-print"></i> Print Certificate
+                            </button>
+                            <a href="verify.html" target="_blank" class="btn btn-outline" id="btnPreviewInVerify"
+                                title="Test in Verification Portal">
+                                <i class="fas fa-external-link-alt"></i> Open Verification Portal
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: Batch Bulk Upload (CSV/JSON) -->
+            <section class="admin-tab-content" id="batch-upload-tab">
+                <div class="batch-workspace card-surface">
+                    <div class="batch-header">
+                        <div>
+                            <h2><i class="fas fa-layer-group"></i> Batch Credential Issuance</h2>
+                            <p>Upload a CSV or JSON file with multiple student records to issue certificates in bulk
+                                with derived cryptographic Merkle Roots.</p>
+                        </div>
+                        <div class="batch-actions-top">
+                            <button type="button" class="btn btn-secondary" id="btnDownloadBatchTemplate">
+                                <i class="fas fa-download"></i> Download CSV Template
+                            </button>
+                            <button type="button" class="btn btn-primary" id="btnLoadSampleBatch">
+                                <i class="fas fa-magic"></i> Load 5 Sample Records
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Batch Dropzone -->
+                    <div class="batch-dropzone" id="batchDropzone">
+                        <input type="file" id="batchFileInput" accept=".csv,.json" class="file-input-hidden">
+                        <div class="batch-dropzone-content">
+                            <i class="fas fa-file-csv batch-icon"></i>
+                            <h3>Upload CSV or JSON Batch Roster</h3>
+                            <p>Drag and drop your roster file or <span class="browse-link">click to browse</span></p>
+                            <span class="dropzone-hint">Expected fields: holderName, studentId, email, degreeTitle,
+                                credentialType, issuerName, issueDate, grade</span>
+                        </div>
+                    </div>
+
+                    <!-- Batch Preview Table Container -->
+                    <div class="batch-preview-section" id="batchPreviewSection" style="display: none;">
+                        <div class="batch-stats-banner">
+                            <div class="batch-stat-item">
+                                <span class="batch-stat-title">Records Parsed:</span>
+                                <strong id="batchRecordsCount">0</strong>
+                            </div>
+                            <div class="batch-stat-item">
+                                <span class="batch-stat-title">Batch Merkle Root:</span>
+                                <code id="batchMerkleRoot">0x0000000000000000000000000000000000000000</code>
+                            </div>
+                            <div class="batch-stat-item">
+                                <button type="button" class="btn btn-primary btn-mint-batch" id="btnAnchorBatch">
+                                    <i class="fas fa-cubes-stacked"></i> Anchor Entire Batch to Blockchain
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table" id="batchDataTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Student ID</th>
+                                        <th>Holder Name</th>
+                                        <th>Credential Title</th>
+                                        <th>Issuer</th>
+                                        <th>Issue Date</th>
+                                        <th>Calculated SHA-256 Hash</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batchTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: Certificate Registry Ledger -->
+            <section class="admin-tab-content" id="registry-tab">
+                <div class="registry-workspace card-surface">
+                    <div class="registry-controls-bar">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="registrySearchInput"
+                                placeholder="Search by recipient name, certificate ID, issuer, or hash...">
+                            <button type="button" class="btn-clear-search" id="btnClearSearch" title="Clear Search"
+                                style="display: none;"><i class="fas fa-times"></i></button>
+                        </div>
+
+                        <div class="filter-group">
+                            <select id="registryStatusFilter" class="select-filter">
+                                <option value="all">All Statuses</option>
+                                <option value="valid">✅ Valid & Active</option>
+                                <option value="expired">⚠️ Expired</option>
+                                <option value="revoked">🚫 Revoked</option>
+                            </select>
+
+                            <select id="registryTypeFilter" class="select-filter">
+                                <option value="all">All Credential Types</option>
+                                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                                <option value="Master's Degree">Master's Degree</option>
+                                <option value="Doctorate (PhD)">Doctorate (PhD)</option>
+                                <option value="Professional Certification">Professional Certification</option>
+                                <option value="Course Completion">Course Completion</option>
+                                <option value="Diploma">Diploma</option>
+                            </select>
+                        </div>
+
+                        <div class="export-actions">
+                            <button type="button" class="btn btn-outline" id="btnExportCsv"
+                                title="Export to CSV Spreadsheet">
+                                <i class="fas fa-file-csv"></i> Export CSV
+                            </button>
+                            <button type="button" class="btn btn-outline" id="btnExportJson" title="Export to JSON">
+                                <i class="fas fa-file-code"></i> Export JSON
+                            </button>
+                            <button type="button" class="btn btn-outline btn-danger-outline" id="btnClearRegistry"
+                                title="Clear / Reset Local Demo Data">
+                                <i class="fas fa-trash-can"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Registry Data Table -->
+                    <div class="table-responsive">
+                        <table class="data-table" id="registryTable">
+                            <thead>
+                                <tr>
+                                    <th>ID / Ref</th>
+                                    <th>Recipient Name</th>
+                                    <th>Credential Title</th>
+                                    <th>Issuing Institution</th>
+                                    <th>Issue Date</th>
+                                    <th>Status</th>
+                                    <th>Blockchain Record Hash</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="registryTableBody">
+                                <!-- Populated dynamically by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" id="registryEmptyState" style="display: none;">
+                        <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+                        <h3>No Certificates Found</h3>
+                        <p>No certificates match your search filters, or no records have been issued yet.</p>
+                        <button type="button" class="btn btn-primary" id="btnEmptyStateSample">
+                            <i class="fas fa-plus"></i> Load Sample Records
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- ========================================
+         MODALS & OVERLAYS
+         ======================================== -->
+
+    <!-- Mint Success / Receipt Modal -->
+    <div class="modal-overlay" id="receiptModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseReceiptModal">&times;</button>
+            <div class="receipt-header">
+                <div class="receipt-icon"><i class="fas fa-circle-check"></i></div>
+                <h2>Certificate Anchored to Blockchain!</h2>
+                <p>The digital record has been registered with cryptographic proof and is publicly verifiable.</p>
+            </div>
+
+            <div class="receipt-body">
+                <div class="receipt-grid">
+                    <div class="receipt-item">
+                        <span class="label">Certificate ID</span>
+                        <strong id="receiptCertId">CC-2026-7842</strong>
+                    </div>
+                    <div class="receipt-item">
+                        <span class="label">Recipient Name</span>
+                        <strong id="receiptHolder">Alex Morgan</strong>
+                    </div>
+                    <div class="receipt-item">
+                        <span class="label">Execution Mode</span>
+                        <span class="badge-pill" id="receiptMode">Live Sepolia / Demo</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span class="label">Block Number</span>
+                        <strong id="receiptBlockNumber">#6841920</strong>
+                    </div>
+                </div>
+
+                <div class="hash-box">
+                    <div class="hash-label"><i class="fas fa-fingerprint"></i> Document SHA-256 Hash</div>
+                    <div class="hash-value-row">
+                        <code id="receiptFileHash">0x7a2c...</code>
+                        <button class="btn-copy" data-copy-target="receiptFileHash" title="Copy"><i
+                                class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <div class="hash-box">
+                    <div class="hash-label"><i class="fas fa-link"></i> Blockchain Record Hash</div>
+                    <div class="hash-value-row">
+                        <code id="receiptRecordHash">0x1cB0...</code>
+                        <button class="btn-copy" data-copy-target="receiptRecordHash" title="Copy"><i
+                                class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <div class="verification-share-box">
+                    <div class="qr-thumb" id="receiptQrThumb"></div>
+                    <div class="share-info">
+                        <span class="share-title">Public Verification URL:</span>
+                        <div class="url-copy-row">
+                            <input type="text" id="receiptVerifyUrl" readonly>
+                            <button class="btn btn-primary btn-copy-url" id="btnCopyVerifyUrl"><i
+                                    class="fas fa-copy"></i> Copy Link</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <a href="#" target="_blank" class="btn btn-primary" id="btnOpenVerifyModal"><i
+                        class="fas fa-external-link-alt"></i> Open in Verification Portal</a>
+                <button type="button" class="btn btn-secondary" id="btnDoneReceipt">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Full Details Modal -->
+    <div class="modal-overlay" id="detailsModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseDetailsModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-id-card"></i> Certificate Record Details</h2>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                <!-- Injected via JS -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCloseDetailsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code & Barcode Studio Modal -->
+    <div class="modal-overlay" id="qrModal" style="display: none;">
+        <div class="modal-card modal-lg qr-studio-modal">
+            <button class="modal-close" id="btnCloseQrModal">&times;</button>
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <div class="modal-icon-badge"><i class="fas fa-qrcode"></i></div>
+                    <div>
+                        <h2 id="qrModalTitle">Cryptographic QR Code & Barcode Studio</h2>
+                        <p id="qrModalSubtitle">Generate customizable, high-resolution QR codes and Code-128 barcodes
+                            for on-chain verifiable physical/digital credentials</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body qr-studio-grid">
+                <!-- Left: Live QR Preview & Canvas -->
+                <div class="qr-preview-pane">
+                    <div class="qr-display-frame" id="qrDisplayFrame">
+                        <div id="qrModalCode" class="qr-code-canvas-container"></div>
+                        <div class="qr-center-shield" id="qrCenterShield">
+                            <img src="logo.svg" alt="CryptaCore Shield Emblem">
+                        </div>
+                    </div>
+
+                    <div class="barcode-display-frame" style="margin-top: 1rem;">
+                        <svg id="barcodeModalElement"></svg>
+                    </div>
+
+                    <div class="qr-quick-actions">
+                        <button type="button" class="btn btn-sm btn-outline" id="btnCopyQrClipboard">
+                            <i class="fas fa-copy"></i> Copy Image to Clipboard
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline" id="btnPrintQrBadge">
+                            <i class="fas fa-print"></i> Print ID Badge Sticker
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Customization & Parameters -->
+                <div class="qr-controls-pane">
+                    <div class="studio-section-title"><i class="fas fa-palette"></i> 1. Visual Styling & Themes</div>
+
+                    <div class="qr-palette-row">
+                        <button type="button" class="color-preset-btn active" data-color="#0f172a" data-bg="#ffffff"
+                            title="Obsidian Black">
+                            <span class="preset-dot" style="background: #0f172a;"></span> Obsidian
+                        </button>
+                        <button type="button" class="color-preset-btn" data-color="#2563eb" data-bg="#ffffff"
+                            title="Cyber Blue">
+                            <span class="preset-dot" style="background: #2563eb;"></span> Cyber Blue
+                        </button>
+                        <button type="button" class="color-preset-btn" data-color="#059669" data-bg="#ffffff"
+                            title="Blockchain Emerald">
+                            <span class="preset-dot" style="background: #059669;"></span> Emerald
+                        </button>
+                        <button type="button" class="color-preset-btn" data-color="#7c3aed" data-bg="#ffffff"
+                            title="Royal Purple">
+                            <span class="preset-dot" style="background: #7c3aed;"></span> Royal Purple
+                        </button>
+                        <button type="button" class="color-preset-btn" data-color="#d97706" data-bg="#ffffff"
+                            title="Gold Seal">
+                            <span class="preset-dot" style="background: #d97706;"></span> Gold Seal
+                        </button>
+                    </div>
+
+                    <div class="form-row-2" style="margin-top: 0.8rem;">
+                        <div class="form-group">
+                            <label for="qrEccSelect">Error Correction Level</label>
+                            <select id="qrEccSelect">
+                                <option value="H" selected>Level H (30% Damage Recovery)</option>
+                                <option value="Q">Level Q (25% Recovery)</option>
+                                <option value="M">Level M (15% Recovery)</option>
+                                <option value="L">Level L (7% Recovery)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="qrResolutionSelect">Export Resolution</label>
+                            <select id="qrResolutionSelect">
+                                <option value="1024">Ultra HD 300 DPI (1024x1024)</option>
+                                <option value="512">Medium Print (512x512)</option>
+                                <option value="256" selected>Standard Web (256x256)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="toggleQrCenterLogo" checked> Embed CryptaCore Trust Shield in
+                            Center
+                        </label>
+                    </div>
+
+                    <div class="studio-section-title" style="margin-top: 1rem;"><i class="fas fa-database"></i> 2.
+                        Encoded Payload Mode</div>
+                    <div class="payload-mode-selector">
+                        <label class="radio-card active">
+                            <input type="radio" name="qrPayloadMode" value="url" checked>
+                            <div class="radio-content">
+                                <strong>Direct Web Verification URL</strong>
+                                <span>Links straight to public instant verification page</span>
+                            </div>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="qrPayloadMode" value="json">
+                            <div class="radio-content">
+                                <strong>Self-Contained Signed JSON-LD</strong>
+                                <span>Offline verifiable cryptographic credential payload</span>
+                            </div>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="qrPayloadMode" value="hash">
+                            <div class="radio-content">
+                                <strong>Raw Blockchain Record Hash</strong>
+                                <span>On-chain 256-bit immutable root digest</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="encoded-preview-box">
+                        <span class="encoded-label">Active Encoded Data:</span>
+                        <code id="qrActivePayloadText">https://...</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnDownloadQrImage"><i class="fas fa-download"></i>
+                    Download High-Res QR Image</button>
+                <a href="#" target="_blank" class="btn btn-outline" id="btnOpenQrVerifyLink"><i
+                        class="fas fa-external-link-alt"></i> Test Verification Link</a>
+                <button type="button" class="btn btn-secondary" id="btnCloseQrBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revoke Confirmation Modal -->
+    <div class="modal-overlay" id="revokeModal" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="btnCloseRevokeModal">&times;</button>
+            <div class="modal-header">
+                <h3 class="text-danger"><i class="fas fa-triangle-exclamation"></i> Revoke Certificate</h3>
+                <p>Are you sure you want to revoke this certificate on the blockchain? This action is permanent.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="revokeReasonInput">Revocation Reason <span class="required">*</span></label>
+                    <input type="text" id="revokeReasonInput"
+                        placeholder="e.g. Academic misconduct, administrative correction, degree replaced..." required>
+                </div>
+                <div class="record-to-revoke-info" id="revokeRecordSummary"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnConfirmRevoke"><i class="fas fa-ban"></i> Confirm
+                    Revocation</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelRevoke">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- EXTENDED ARCHITECTURE MODALS (4 PORTALS + RE-USABLE MODULES)      -->
+    <!-- ================================================================= -->
+
+    <!-- Modal 1: Issue License Modal -->
+    <div class="modal-overlay" id="issueLicenseModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseIssueLicenseModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-id-card text-emerald"></i> Issue Institutional Operating License</h2>
+                <p>Generate a cryptographically anchored license with unique ID, SHA-256 hash, and verifiable audit trail.</p>
+            </div>
+            <div class="modal-body">
+                <form id="issueLicenseForm">
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="licNumberInput">Official License Number <span class="required">*</span></label>
+                            <input type="text" id="licNumberInput" placeholder="e.g. FCAD-UAS-2026-9041" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="licTypeSelect">License Classification <span class="required">*</span></label>
+                            <select id="licTypeSelect" required>
+                                <option value="Commercial Drone / UAS Operator">Commercial Drone / UAS Operator (Class IV)</option>
+                                <option value="FinTech Cryptographic Asset Custody">FinTech Cryptographic Asset Custody</option>
+                                <option value="Clinical & Medical Practice Permit">Clinical & Medical Practice Permit</option>
+                                <option value="Commercial Aviation Transport">Commercial Aviation Transport</option>
+                                <option value="Autonomous Vehicle Testing License">Autonomous Vehicle Testing License</option>
+                                <option value="Specialized Defense Systems Operation">Specialized Defense Systems Operation</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="licHolderNameInput">Licensee / Organization / Holder Name <span class="required">*</span></label>
+                            <input type="text" id="licHolderNameInput" placeholder="e.g. Dr. Jennifer Hayes or SkyOps Logistics Ltd" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="licHolderIdInput">Licensee ID / National Reg. No.</label>
+                            <input type="text" id="licHolderIdInput" placeholder="e.g. REG-88194">
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="licAuthorityInput">Issuing Authority <span class="required">*</span></label>
+                            <input type="text" id="licAuthorityInput" placeholder="e.g. Federal Civil Aviation Directorate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="licJurisdictionInput">Operating Jurisdiction</label>
+                            <input type="text" id="licJurisdictionInput" placeholder="e.g. European Airspace & Commonwealth Markets">
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="licIssueDateInput">Issue Date <span class="required">*</span></label>
+                            <input type="date" id="licIssueDateInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="licExpiryDateInput">Expiry Date <span class="required">*</span></label>
+                            <input type="date" id="licExpiryDateInput" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="licDescriptionInput">Operational Scope & Authorization Terms</label>
+                        <textarea id="licDescriptionInput" rows="3" placeholder="Authorized scope of operations, compliance conditions, and regulatory provisions..."></textarea>
+                    </div>
+
+                    <div class="modal-footer" style="margin: 1.5rem -1.5rem -1.5rem; padding: 1rem 1.5rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-stamp"></i> Issue & Anchor License</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelIssueLicense">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Issue Credential Modal -->
+    <div class="modal-overlay" id="issueCredentialModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseIssueCredentialModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-award text-purple"></i> Issue Professional Credential</h2>
+                <p>Anchor verifiable professional accreditations, certifications, and skills to the CryptaCore Trust Layer.</p>
+            </div>
+            <div class="modal-body">
+                <form id="issueCredentialForm">
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="credHolderNameInput">Holder / Recipient Name <span class="required">*</span></label>
+                            <input type="text" id="credHolderNameInput" placeholder="e.g. Marcus Sterling" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="credHolderIdInput">Member / Professional ID</label>
+                            <input type="text" id="credHolderIdInput" placeholder="e.g. AUDITOR-SEC-7741">
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="credTitleInput">Credential Title <span class="required">*</span></label>
+                            <input type="text" id="credTitleInput" placeholder="e.g. Certified Lead Smart Contract Security Auditor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="credProfessionInput">Profession / Domain <span class="required">*</span></label>
+                            <input type="text" id="credProfessionInput" placeholder="e.g. Cybersecurity & Blockchain Systems" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="credSkillsInput">Skills & Competencies (Comma-separated)</label>
+                        <input type="text" id="credSkillsInput" placeholder="e.g. EVM Bytecode, Formal Verification, Flash Loan Mitigation, Cryptographic Auditing">
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="credIssuerOrgInput">Issuing Organization <span class="required">*</span></label>
+                            <input type="text" id="credIssuerOrgInput" placeholder="e.g. Ethereum Security Council" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="credGradeInput">Performance / Distinction / Grade</label>
+                            <input type="text" id="credGradeInput" placeholder="e.g. Score: 98/100 (Fellow Distinction)">
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="credIssueDateInput">Issue Date <span class="required">*</span></label>
+                            <input type="date" id="credIssueDateInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="credExpiryDateInput">Expiry Date (Leave empty for Lifetime)</label>
+                            <input type="date" id="credExpiryDateInput">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="credDescInput">Credential Synopsis & Assessment Summary</label>
+                        <textarea id="credDescInput" rows="3" placeholder="Description of certification criteria, capstone defense, or curriculum verified..."></textarea>
+                    </div>
+
+                    <div class="modal-footer" style="margin: 1.5rem -1.5rem -1.5rem; padding: 1rem 1.5rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-certificate"></i> Mint & Anchor Credential</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelIssueCredential">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Register Digital Asset Modal -->
+    <div class="modal-overlay" id="registerAssetModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseRegisterAssetModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-gem text-cyan"></i> Register Digital Asset</h2>
+                <p>Register intellectual property, deeds, or digital assets with cryptographic ownership proof.</p>
+            </div>
+            <div class="modal-body">
+                <form id="registerAssetForm">
+                    <div class="form-group">
+                        <label for="assetNameInput">Asset Title / Name <span class="required">*</span></label>
+                        <input type="text" id="assetNameInput" placeholder="e.g. Quantum-Resistant Neural Network Architecture Patent" required>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="assetTypeSelect">Asset Classification <span class="required">*</span></label>
+                            <select id="assetTypeSelect" required>
+                                <option value="Intellectual Property / DeepTech Patent">Intellectual Property / Patent</option>
+                                <option value="Real Estate Deed / Property Title">Real Estate Deed / Land Title</option>
+                                <option value="Digital Artwork / High-Value Provenance">Fine Art / Provenance Asset</option>
+                                <option value="Verified Carbon Offset Credits">Ecological / Carbon Offset Credits</option>
+                                <option value="Cryptographic Domain / Web3 Protocol Name">Decentralized Protocol Domain</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assetValuationInput">Estimated Valuation / Registry Standard</label>
+                            <input type="text" id="assetValuationInput" placeholder="e.g. $14,500,000 USD / USPTO Validated">
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="assetCreatorInput">Original Creator / Inventor <span class="required">*</span></label>
+                            <input type="text" id="assetCreatorInput" placeholder="e.g. Dr. Aris Thorne" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assetOwnerInput">Initial Title Owner <span class="required">*</span></label>
+                            <input type="text" id="assetOwnerInput" placeholder="e.g. Dr. Aris Thorne or Apex Neural Technologies" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assetDescInput">Technical & Legal Description</label>
+                        <textarea id="assetDescInput" rows="3" placeholder="Detailed architectural description, patent claims, coordinates, or provenance pedigree..."></textarea>
+                    </div>
+
+                    <div class="modal-footer" style="margin: 1.5rem -1.5rem -1.5rem; padding: 1rem 1.5rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-link"></i> Anchor Asset to Ledger</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelRegisterAsset">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Transfer Ownership Modal -->
+    <div class="modal-overlay" id="transferOwnershipModal" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="btnCloseTransferModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-arrow-right-arrow-left text-primary"></i> Cryptographic Ownership Transfer</h2>
+                <p>Transfer beneficial title and ownership rights on the blockchain with full historical audit preservation.</p>
+            </div>
+            <div class="modal-body">
+                <form id="transferOwnershipForm">
+                    <input type="hidden" id="transferAssetIdInput">
+
+                    <div class="form-group">
+                        <label>Asset Selected</label>
+                        <div id="transferAssetTitleDisplay" style="font-weight: 700; color: var(--text-primary); padding: 0.5rem 0.75rem; background: var(--bg-secondary); border-radius: 6px; font-size: 0.95rem;">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Recorded Owner</label>
+                        <div id="transferCurrentOwnerDisplay" style="font-weight: 700; color: #10b981; padding: 0.5rem 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 6px; font-size: 0.95rem;">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transferNewOwnerInput">New Legal Owner / Transferee Name <span class="required">*</span></label>
+                        <input type="text" id="transferNewOwnerInput" placeholder="e.g. Apex Neural Technologies Ltd or Sovereign Holdings" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transferNewOwnerAddressInput">Transferee Blockchain Wallet Address (Optional)</label>
+                        <input type="text" id="transferNewOwnerAddressInput" placeholder="0x... (Will generate deterministic wallet if left blank)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transferReasonInput">Transfer Rationale & Agreement Reference <span class="required">*</span></label>
+                        <input type="text" id="transferReasonInput" placeholder="e.g. Corporate Acquisition, Commercial Assignment Deed #4401" required>
+                    </div>
+
+                    <div class="modal-footer" style="margin: 1.5rem -1.5rem -1.5rem; padding: 1rem 1.5rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-check-double"></i> Execute Title Transfer</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelTransfer">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Register Supply Chain Product Modal -->
+    <div class="modal-overlay" id="registerProductModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseRegisterProductModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-boxes-packing text-amber"></i> Register Product / Batch Lot</h2>
+                <p>Initiate cold-chain or high-value manufacturing provenance tracking from milestone 1 (MANUFACTURED).</p>
+            </div>
+            <div class="modal-body">
+                <form id="registerProductForm">
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="prodNameInput">Product / Commodity Name <span class="required">*</span></label>
+                            <input type="text" id="prodNameInput" placeholder="e.g. BioShield UltraCold mRNA Vaccine or Titanium Turbine Rotor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prodBatchInput">Batch / Lot Number <span class="required">*</span></label>
+                            <input type="text" id="prodBatchInput" placeholder="e.g. LOT-VX-9902-B7" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="prodManufacturerInput">Manufacturer / Production Entity <span class="required">*</span></label>
+                            <input type="text" id="prodManufacturerInput" placeholder="e.g. BioShield Therapeutics AG" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prodOriginInput">Manufacturing Origin <span class="required">*</span></label>
+                            <input type="text" id="prodOriginInput" placeholder="e.g. Basel BioPark, Switzerland" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="prodQuantityInput">Batch Quantity & Units</label>
+                            <input type="text" id="prodQuantityInput" placeholder="e.g. 50,000 Vials (250,000 Doses)">
+                        </div>
+                        <div class="form-group">
+                            <label for="prodMfgDateInput">Production Date <span class="required">*</span></label>
+                            <input type="date" id="prodMfgDateInput" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodInitialOwnerInput">Initial Custodian Organization <span class="required">*</span></label>
+                        <input type="text" id="prodInitialOwnerInput" placeholder="e.g. BioShield Therapeutics AG Quality Hub" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodNotesInput">Specification & Environmental Thresholds</label>
+                        <textarea id="prodNotesInput" rows="3" placeholder="e.g. Cryo-Cold Storage (-70°C ± 5°C), IoT telemetry frequency, handling protocols..."></textarea>
+                    </div>
+
+                    <div class="modal-footer" style="margin: 1.5rem -1.5rem -1.5rem; padding: 1rem 1.5rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-industry"></i> Mint Production Lot</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelRegisterProduct">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Add Supply Chain Milestone Event Modal -->
+    <div class="modal-overlay" id="addSupplyEventModal" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="btnCloseAddSupplyEventModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-truck-fast text-cyan"></i> Record Supply Chain Milestone</h2>
+                <p>Advance product lot through verification checkpoints with cryptographic timestamp and actor attribution.</p>
+            </div>
+            <div class="modal-body">
+                <form id="addSupplyEventForm">
+                    <div class="form-group">
+                        <label for="eventProductSelect">Target Product Lot <span class="required">*</span></label>
+                        <select id="eventProductSelect" required>
+                            <!-- Populated via JS -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventStageSelect">Milestone Stage <span class="required">*</span></label>
+                        <select id="eventStageSelect" required>
+                            <option value="QUALITY CHECKED">QUALITY CHECKED (Lab Inspection Passed)</option>
+                            <option value="PACKED">PACKED (Tamper-Evident Packaging Sealed)</option>
+                            <option value="SHIPPED">SHIPPED (Departed Distribution Terminal)</option>
+                            <option value="RECEIVED">RECEIVED (Arrived at Transit Logistics Hub)</option>
+                            <option value="INSPECTED">INSPECTED (Customs & Regulatory Clearance)</option>
+                            <option value="DELIVERED">DELIVERED (Final End-Recipient Delivery)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="eventActorInput">Responsible Entity / Inspector <span class="required">*</span></label>
+                            <input type="text" id="eventActorInput" placeholder="e.g. Lufthansa Cargo or FDA Inspector" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventLocationInput">Checkpoint Location <span class="required">*</span></label>
+                            <input type="text" id="eventLocationInput" placeholder="e.g. Frankfurt Air Freight Hub (FRA)" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="eventNewOwnerInput">New Custodian / Transferee</label>
+                            <input type="text" id="eventNewOwnerInput" placeholder="e.g. US MedExpress Haulage">
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTemperatureInput">Environmental / Sensor Reading</label>
+                            <input type="text" id="eventTemperatureInput" placeholder="e.g. -71.8°C (Normal)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventNotesInput">Inspection Notes / Telemetry Log</label>
+                        <textarea id="eventNotesInput" rows="2" placeholder="e.g. Cold-chain seal intact. No thermal excursion detected. Signed off by Quality Director."></textarea>
+                    </div>
+
+                    <div class="modal-footer" style="margin: 1.5rem -1.5rem -1.5rem; padding: 1rem 1.5rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-stamp"></i> Record Milestone on Blockchain</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelAddSupplyEvent">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 7: Renew Record Modal -->
+    <div class="modal-overlay" id="renewRecordModal" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="btnCloseRenewModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-rotate text-primary"></i> Renew Record Validity</h2>
+                <p>Extend the validity period of an active or expired license/credential on the blockchain.</p>
+            </div>
+            <div class="modal-body">
+                <form id="renewRecordForm">
+                    <input type="hidden" id="renewRecordIdInput">
+                    <div class="form-group">
+                        <label>Record Selected</label>
+                        <div id="renewRecordTitleDisplay" style="font-weight: 700; color: var(--text-primary); padding: 0.5rem 0.75rem; background: var(--bg-secondary); border-radius: 6px;">-</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="renewNewExpiryInput">New Expiration Date <span class="required">*</span></label>
+                        <input type="date" id="renewNewExpiryInput" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="renewActorInput">Renewing Authority / Officer</label>
+                        <input type="text" id="renewActorInput" placeholder="e.g. Federal Civil Aviation Directorate">
+                    </div>
+
+                    <div class="modal-footer" style="margin: 1.5rem -1.5rem -1.5rem; padding: 1rem 1.5rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-calendar-check"></i> Confirm Renewal</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelRenew">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 8: Share Credential Modal -->
+    <div class="modal-overlay" id="shareCredentialModal" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" id="btnCloseShareCredentialModal">&times;</button>
+            <div class="modal-header">
+                <h2><i class="fas fa-share-nodes text-purple"></i> Share Verifiable Credential</h2>
+                <p>Generate a tamper-evident public verification link and cryptographic QR badge for employers and verifiers.</p>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div id="shareQrDisplay" style="display: flex; justify-content: center; margin: 1.5rem 0;"></div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Public Verification Link</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="shareUrlInput" readonly style="flex: 1; font-family: monospace; font-size: 0.85rem;">
+                        <button class="btn btn-secondary" id="btnCopyShareUrl" type="button"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <a href="#" target="_blank" class="btn btn-primary" id="btnOpenShareVerifyLink"><i class="fas fa-external-link-alt"></i> Open Verification Portal</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 9: Verifier-Friendly Public View Modal -->
+    <div class="modal-overlay" id="verifierFriendlyModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseVerifierFriendlyModal">&times;</button>
+            <div class="modal-header" style="background: rgba(16, 185, 129, 0.08);">
+                <h2><i class="fas fa-shield-halved text-emerald"></i> CryptaCore Verifier-Friendly Credential View</h2>
+                <p>Publicly verified authenticity badge without exposing unnecessary personal private information (PII).</p>
+            </div>
+            <div class="modal-body" id="verifierFriendlyBody">
+                <!-- Injected via JS -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCloseVerifierBtn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 10: Universal Record Details Modal -->
+    <div class="modal-overlay" id="universalRecordModal" style="display: none;">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" id="btnCloseUniversalModal">&times;</button>
+            <div class="modal-header">
+                <h2 id="universalModalTitle"><i class="fas fa-file-contract text-primary"></i> Record Details</h2>
+                <p id="universalModalSubtitle">CryptaCore Ledger Immutable Record Information</p>
+            </div>
+            <div class="modal-body" id="universalModalBody">
+                <!-- Injected via JS -->
+            </div>
+            <div class="modal-footer">
+                <a href="#" target="_blank" class="btn btn-primary" id="btnUniversalOpenVerify"><i class="fas fa-external-link-alt"></i> Verify on Blockchain</a>
+                <button type="button" class="btn btn-secondary" id="btnCloseUniversalBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Canvas for PNG Generation -->
+    <canvas id="hiddenCertCanvas" style="display: none;"></canvas>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>CryptaCore</h4>
+                    <p>Blockchain Trust Layer for Digital Records & Verifiable Credentials</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Portals</h4>
+                    <ul>
+                        <li><a href="index.html">Landing Page</a></li>
+                        <li><a href="verify.html">Public Verification Portal</a></li>
+                        <li><a href="admin.html">Admin Authority Portal</a></li>
+                        <li><a href="QUICKSTART.html">Quick Start Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Hackathon Reference</h4>
+                    <p>Smart India Hackathon 2026</p>
+                    <p>Problem Statement ID: SIH26194</p>
+                    <p>Theme: Blockchain & Cybersecurity</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 CryptaCore. All rights reserved. Built with cryptographic integrity.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Admin Logic Script -->
+    <script src="admin-script.js"></script>
+</body>
+
+</html>

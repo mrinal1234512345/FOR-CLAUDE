@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptaCore - Blockchain Trust Layer for Digital Records</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- Google Fonts: Inter & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Active Theory Inspired Ambient Flow Field Background Canvas -->
+    <canvas id="atFlowCanvas" class="at-flow-canvas" aria-hidden="true"></canvas>
+
+    <!-- Floating OpenAI-Style Pill Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="navbar-brand">
+                <img src="logo.svg" alt="CryptaCore Logo" class="navbar-logo">
+                <div class="brand-text">
+                    <span>CryptaCore</span>
+                    <span class="brand-version-pill">v3.0</span>
+                </div>
+            </a>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#problem" class="nav-link">Problem</a>
+                <a href="#solution" class="nav-link">Solution</a>
+                <a href="#how-it-works" class="nav-link">Architecture</a>
+                <a href="verify.html" class="nav-link"><i class="fas fa-check-double"></i> Verify</a>
+                <a href="admin.html" class="nav-link nav-link-highlight"><i class="fas fa-shield-alt"></i> Admin Console</a>
+                <a href="QUICKSTART.html" class="nav-link"><i class="fas fa-book-open"></i> Docs</a>
+                <a href="#demo" class="nav-link"><i class="fas fa-terminal"></i> Playground</a>
+                <a href="#ai-assistant" class="nav-link"><i class="fas fa-sparkles"></i> AI Assistant</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle dark / light mode" aria-label="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- OpenAI-Style Hero Section with Dynamic Glowing 'C' Animation -->
+    <section id="home" class="hero">
+        <div class="hero-bg-glows">
+            <div class="glow-orb glow-cyan"></div>
+            <div class="glow-orb glow-violet"></div>
+            <div class="glow-grid"></div>
+        </div>
+        <div class="container hero-container">
+            <div class="hero-content">
+
+
+                <div class="hero-badge">
+                    <span class="badge-pulse"></span>
+                    <span>CryptaCore 3.0 • Blockchain Trust Layer</span>
+                </div>
+                <h1 class="hero-title">A Trust Layer for Real-World Digital Records</h1>
+                <p class="hero-description">
+                    A tamper-evident, decentralized verification platform turning academic credentials, state licenses, digital deeds, and supply chain provenance into cryptographically proven, permanent on-chain assets.
+                </p>
+                <div class="hero-buttons">
+                    <a href="admin.html" class="btn btn-openai-primary">
+                        <span>Admin Console</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="verify.html" class="btn btn-openai-secondary">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Verify a Record</span>
+                    </a>
+                    <button type="button" class="btn btn-openai-ghost" onclick="scrollToSection('demo')">
+                        <i class="fas fa-terminal"></i>
+                        <span>Live Playground</span>
+                    </button>
+                </div>
+                <div class="hero-stats-strip">
+                    <div class="hero-stat-item">
+                        <span class="stat-num">SHA-256</span>
+                        <span class="stat-desc">Native WebCrypto</span>
+                    </div>
+                    <div class="stat-sep"></div>
+                    <div class="hero-stat-item">
+                        <span class="stat-num">5 Sectors</span>
+                        <span class="stat-desc">Unified Ledger</span>
+                    </div>
+                    <div class="stat-sep"></div>
+                    <div class="hero-stat-item">
+                        <span class="stat-num">Sub-10ms</span>
+                        <span class="stat-desc">Verification Speed</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- The Glowing 'C' Holographic Canvas Stage -->
+            <div class="hero-c-stage" id="heroCStage">
+                <canvas id="cAnimCanvas" width="600" height="600" aria-label="CryptaCore Glowing C Holographic Animation"></canvas>
+                <div class="c-aura-glow"></div>
+                <div class="c-ambient-tag">
+                    <i class="fas fa-cube text-primary"></i>
+                    <span>CRYPTACORE PROTOCOL • SHA-256 IMMUTABLE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="problem section">
+        <div class="container">
+            <span class="section-kicker">[ 01 // THE CHALLENGE ]</span>
+            <h2>The Trust Deficit in Digital Records</h2>
+            <p class="section-subtitle">Digital credentials and physical records face systemic vulnerability without decentralized verification</p>
+
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Lack of Trust</h3>
+                    <p>Digital credentials and certificates can be easily forged or manipulated without verification mechanisms.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Manual Verification</h3>
+                    <p>Institutions waste time manually verifying authenticity of documents from students and applicants.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-lock-open"></i>
+                    <h3>No Ownership Record</h3>
+                    <p>Digital assets lack clear ownership history and transfer mechanisms, leading to disputes.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-ban"></i>
+                    <h3>Fraud & Counterfeits</h3>
+                    <p>Supply chains, licenses, and certificates suffer from fraudulent duplicates and unauthorized copies.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-eye-slash"></i>
+                    <h3>Limited Transparency</h3>
+                    <p>No clear audit trails for credential issuance, transfers, or revocations in distributed systems.</p>
+                </div>
+                <div class="problem-card">
+                    <i class="fas fa-network-wired"></i>
+                    <h3>Fragmented Systems</h3>
+                    <p>Multiple institutions can't easily verify records across different platforms and databases.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="solution section">
+        <div class="container">
+            <span class="section-kicker">[ 02 // ARCHITECTURE ]</span>
+            <h2>The Solution: CryptaCore</h2>
+            <p class="section-subtitle">Blockchain-Powered Verification & Cryptographic Provenance</p>
+
+            <div class="solution-content">
+                <div class="solution-text">
+                    <h3>What is CryptaCore?</h3>
+                    <p>CryptaCore is a blockchain-based platform that transforms traditional digital records into
+                        tamper-evident, verifiable assets with complete ownership history and cryptographic proof.</p>
+
+                    <ul class="features-list">
+                        <li><strong>Tamper-Evident Blockchain:</strong> Records are immutably stored with cryptographic
+                            hashing</li>
+                        <li><strong>Smart Contract Automation:</strong> Automated verification, approvals, and transfers
+                        </li>
+                        <li><strong>Digital Ownership:</strong> Clear chain of custody and transfer history</li>
+                        <li><strong>Wallet Authentication:</strong> Secure identity verification via cryptographic
+                            wallets</li>
+                        <li><strong>IPFS Integration:</strong> Decentralized storage for large documents</li>
+                        <li><strong>Role-Based Access:</strong> Granular permissions for different stakeholders</li>
+                    </ul>
+                </div>
+                <div class="solution-visual">
+                    <div class="blockchain-diagram">
+                        <div class="diagram-header"><i class="fas fa-cubes"></i> Blockchain Architecture</div>
+                        <div class="blocks-container">
+                            <div class="block-item">
+                                <div class="block-hash">0x7a2c...</div>
+                                <div class="block-data">Record Hash</div>
+                                <div class="block-timestamp">2026-09-01</div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="block-item">
+                                <div class="block-hash">0xf4d1...</div>
+                                <div class="block-data">Record Hash</div>
+                                <div class="block-timestamp">2026-09-02</div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="block-item">
+                                <div class="block-hash">0xb3e9...</div>
+                                <div class="block-data">Record Hash</div>
+                                <div class="block-timestamp">2026-09-03</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 14px;">
+                            Each record is cryptographically linked. Tampering breaks the chain.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works section">
+        <div class="container">
+            <span class="section-kicker">[ 03 // PROTOCOL LIFECYCLE ]</span>
+            <h2>How CryptaCore Operates</h2>
+            <p class="section-subtitle">A seamless 4-step cryptographic lifecycle securing records from issuance to verification</p>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <h3>Register Record</h3>
+                    <p>Issuing authority submits record metadata (certificate, license, or digital deed) to the CryptaCore platform.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <h3>Compute Proof</h3>
+                    <p>The system generates a cryptographic SHA-256 digest and anchors the metadata and IPFS CID to the ledger.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <h3>Anchor to Contract</h3>
+                    <p>Smart contracts enforce immutable validation rules, ownership attribution, and multi-signature authorization.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <h3>Universal Verify</h3>
+                    <p>Anyone can authenticate authenticity, validity status, and provenance history in milliseconds via QR or hash.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features section">
+        <div class="container">
+            <span class="section-kicker">[ 04 // CAPABILITIES ]</span>
+            <h2>Enterprise-Grade Trust Features</h2>
+            <p class="section-subtitle">Everything required for tamper-evident digital governance across public and private sectors</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3>Immutable Ledger</h3>
+                    <p>Once anchored, records cannot be modified or deleted, guaranteeing absolute integrity and eliminating counterfeit credentials.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>Full Audit Trails</h3>
+                    <p>Track every lifecycle state change, ownership assignment, and milestone timestamp with cryptographic immutability.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Automated Rules</h3>
+                    <p>Smart contracts enforce expiration policies, multi-signature authority approvals, and programmatic validity checks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>Role-Based Access</h3>
+                    <p>Granular RBAC controls permissions across Administrators, Issuing Authorities, Asset Holders, and Public Verifiers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3>Instant QR Verification</h3>
+                    <p>Share dynamic cryptographic QR codes allowing instant camera-scan verification without requiring wallet software.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3>Cross-Sector Architecture</h3>
+                    <p>Unifies academic degrees, state driver licenses, professional certs, carbon deeds, and cold-chain supply lots in one ledger.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="benefits section">
+        <div class="container">
+            <span class="section-kicker">[ 05 // STAKEHOLDER IMPACT ]</span>
+            <h2>Who Benefits from CryptaCore?</h2>
+            <p class="section-subtitle">Transforming trust paradigms across students, universities, enterprises, and regulators</p>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Students & Citizens</h3>
+                    <ul>
+                        <li>Permanent, sovereign control over academic & professional portfolios</li>
+                        <li>Zero delays in employer background and degree checks</li>
+                        <li>Share verifiable proof without exposing confidential PII</li>
+                        <li>Tamper-proof storage that never expires or gets lost</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3>Universities & Authorities</h3>
+                    <ul>
+                        <li>Completely eliminate fake degrees and forged certificates</li>
+                        <li>Automate issuance with bulk CSV processing and templates</li>
+                        <li>Reduce manual credential verification overhead by 90%+</li>
+                        <li>Enhance global institutional accreditation and trust</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Enterprises & Employers</h3>
+                    <ul>
+                        <li>Verify applicant resumes and licenses with 1-click authenticity</li>
+                        <li>End credential fraud and resume misrepresentation</li>
+                        <li>Inspect cold-chain supply provenance and temperature history</li>
+                        <li>Ensure legal compliance with on-chain audit records</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3>Governments & Regulators</h3>
+                    <ul>
+                        <li>Real-time compliance monitoring for professional licenses</li>
+                        <li>Transparent and non-repudiable state registries</li>
+                        <li>Eliminate duplicate vehicle registrations and fake permits</li>
+                        <li>Enhanced citizen trust in digital public infrastructure (DPI)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Interactive Playground Section -->
+    <section id="demo" class="demo section">
+        <div class="container">
+            <span class="section-kicker">[ 06 // INTERACTIVE PLAYGROUND ]</span>
+            <h2>Live Cryptographic Playground</h2>
+            <p class="section-subtitle">Experience client-side SHA-256 computation, simulated blockchain anchoring, and instant verification in real time</p>
+
+            <div class="demo-container">
+                <!-- Playground Input Panel -->
+                <div class="demo-panel">
+                    <div class="demo-header">
+                        <div class="terminal-title-row">
+                            <div class="terminal-dots">
+                                <span class="terminal-dot dot-red"></span>
+                                <span class="terminal-dot dot-yellow"></span>
+                                <span class="terminal-dot dot-green"></span>
+                            </div>
+                            <h3><i class="fas fa-terminal"></i> CryptaCore Node Terminal</h3>
+                        </div>
+                        <button type="button" id="connectWalletBtn" class="btn btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.8rem;">
+                            <i class="fas fa-wallet"></i> Connect Wallet
+                        </button>
+                    </div>
+
+                    <div class="demo-form">
+                        <!-- Quick Presets -->
+                        <div class="demo-presets-row">
+                            <span class="preset-label"><i class="fas fa-bolt text-primary"></i> Quick Presets:</span>
+                            <button type="button" class="btn-preset" onclick="fillDemoPreset('degree')">🎓 MIT Degree</button>
+                            <button type="button" class="btn-preset" onclick="fillDemoPreset('license')">🪪 FAA Pilot License</button>
+                            <button type="button" class="btn-preset" onclick="fillDemoPreset('supply')">📦 mRNA Vaccine Lot</button>
+                        </div>
+
+                        <div id="blockchainStatus" class="network-status" style="margin-bottom: 1.25rem; color: var(--text-muted); font-size: 0.85rem; font-family: 'Fira Code', monospace;">
+                            ● Node Mode: Browser WebCrypto Simulation (Sepolia Ready)
+                        </div>
+
+                        <form id="recordForm">
+                            <div class="form-group">
+                                <label for="recordType">Record Classification:</label>
+                                <select id="recordType" required>
+                                    <option value="">Select a type...</option>
+                                    <option value="certificate">Academic Certificate / Degree</option>
+                                    <option value="credential">Professional Credential</option>
+                                    <option value="license">Government License</option>
+                                    <option value="ownership">Digital Ownership Title</option>
+                                    <option value="supply">Supply Chain Provenance Lot</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recipientName">Subject / Recipient Entity:</label>
+                                <input type="text" id="recipientName" placeholder="e.g. Alex Morgan or Apex Corp" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="issuerName">Issuing Authority / Organization:</label>
+                                <input type="text" id="issuerName" placeholder="e.g. MIT Center for Digital Currency / FAA" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="recordDetails">Cryptographic Metadata & Specifications:</label>
+                                <textarea id="recordDetails" placeholder="Record specifications, competency score, serial lot, or terms..." rows="3" required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-openai-primary" style="width: 100%; justify-content: center;">
+                                <i class="fas fa-stamp"></i>
+                                <span>Compute SHA-256 & Anchor to Ledger</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Playground Output Terminal -->
+                <div class="demo-panel">
+                    <div class="demo-header">
+                        <div class="terminal-title-row">
+                            <div class="terminal-dots">
+                                <span class="terminal-dot dot-red"></span>
+                                <span class="terminal-dot dot-yellow"></span>
+                                <span class="terminal-dot dot-green"></span>
+                            </div>
+                            <h3><i class="fas fa-cube text-primary"></i> Blockchain State & Proof</h3>
+                        </div>
+                    </div>
+                    <div id="demoOutput" class="demo-output">
+                        <div class="placeholder-text">
+                            <i class="fas fa-terminal fa-2x" style="color: rgba(56, 189, 248, 0.4); margin-bottom: 1rem; display: block;"></i>
+                            Select a Quick Preset or submit a record to inspect the cryptographic SHA-256 digest and ledger block telemetry...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instant Verification Section -->
+            <div class="verification-section">
+                <h3><i class="fas fa-shield-halved text-primary"></i> Instant Hash & ID Verification</h3>
+                <p style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.92rem;">
+                    Enter any Record ID, cryptographic 64-char SHA-256 hash, or subject name to evaluate ledger authenticity:
+                </p>
+                <div class="verify-container">
+                    <input type="text" id="verifyHash" placeholder="e.g. LIC-2026-001, CRD-2026-001, AST-2026-001, CC-2026-7842, or 0x..." class="verify-input">
+                    <button class="btn btn-openai-primary" onclick="verifyRecord()">
+                        <i class="fas fa-search"></i>
+                        <span>Verify Authenticity</span>
+                    </button>
+                </div>
+                
+                <!-- Quick Test Chips -->
+                <div class="quick-verify-chips" style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;"><i class="fas fa-bolt text-primary"></i> Quick Chips:</span>
+                    <button type="button" class="btn-preset" onclick="quickFillVerify('LIC-2026-001')">🪪 License (LIC-001)</button>
+                    <button type="button" class="btn-preset" onclick="quickFillVerify('CRD-2026-001')">🏅 Credential (CRD-001)</button>
+                    <button type="button" class="btn-preset" onclick="quickFillVerify('AST-2026-001')">💎 Asset (AST-001)</button>
+                    <button type="button" class="btn-preset" onclick="quickFillVerify('PRD-2026-001')">📦 Supply (PRD-001)</button>
+                    <button type="button" class="btn-preset" onclick="quickFillVerify('CC-2026-7842')">🎓 Degree (CC-7842)</button>
+                </div>
+
+                <div id="verifyOutput" class="verify-output" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Section -->
+    <section id="ai-assistant" class="ai-assistant section">
+        <div class="container">
+            <span class="section-kicker">[ 07 // INTELLIGENT AGENT ]</span>
+            <h2>CryptaBot AI Assistant</h2>
+            <p class="section-subtitle">Local neural agent running directly in your browser. Ask anything about CryptaCore's architecture, verification, smart contracts, or governance.</p>
+
+            <div class="ai-assistant-wrapper">
+                <!-- Chat Window Header -->
+                <div class="ai-chat-header">
+                    <div class="ai-agent-profile">
+                        <div class="ai-avatar-wrap">
+                            <i class="fas fa-robot"></i>
+                            <span class="ai-status-pulse"></span>
+                        </div>
+                        <div class="ai-agent-meta">
+                            <div class="ai-agent-name">
+                                <span>CryptaBot</span>
+                                <span class="ai-tag-pill">LOCAL AGENT</span>
+                            </div>
+                            <span class="ai-agent-status">Online • Browser-Native Engine • Zero Latency</span>
+                        </div>
+                    </div>
+                    <div class="ai-header-controls">
+                        <button type="button" class="btn-ai-control" id="aiClearChatBtn" title="Clear conversation" aria-label="Clear chat">
+                            <i class="fas fa-trash-can"></i>
+                            <span>Clear Chat</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Prompt Chips -->
+                <div class="ai-quick-prompts" id="aiQuickPrompts" aria-label="Suggested Questions">
+                    <span class="prompts-label"><i class="fas fa-bolt text-primary"></i> Suggested:</span>
+                    <button type="button" class="ai-prompt-chip" data-prompt="How does instant document verification work?">⚡ Instant Verification</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="Is my document data kept private or uploaded unhashed?">🔒 Privacy & WebCrypto</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="What smart contracts are used and how is access controlled?">📜 Smart Contracts & RBAC</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="How do institutions like universities or state authorities issue records?">🏛️ Institutional Issuance</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="What is the difference between SHA-256 and IPFS CID?">🌐 SHA-256 vs IPFS</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="How do I use the live interactive Playground?">🧪 Playground Guide</button>
+                </div>
+
+                <!-- Messages Thread -->
+                <div class="ai-chat-messages" id="aiChatMessages" role="log" aria-live="polite">
+                    <!-- Initial Welcome Message from Bot -->
+                    <div class="chat-msg bot">
+                        <div class="chat-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="chat-bubble">
+                            <div class="chat-bubble-text">
+                                <p>👋 Hello! I am <strong>CryptaBot</strong>, your local AI assistant for the CryptaCore blockchain platform.</p>
+                                <p>I can answer any questions about our <strong>cryptographic proof pipeline</strong>, <strong>Solidity smart contracts</strong>, <strong>instant QR verification</strong>, <strong>institutional governance</strong>, or <strong>how to use the live playground</strong>. What would you like to explore?</p>
+                            </div>
+                            <div class="msg-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Bar -->
+                <form class="ai-input-form" id="aiChatForm">
+                    <div class="ai-input-container">
+                        <input type="text" id="aiUserInput" class="ai-chat-input" placeholder="Ask CryptaBot about architecture, verification, smart contracts, or records..." autocomplete="off" required>
+                        <button type="submit" class="btn-ai-send" id="aiSendBtn" aria-label="Send question">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                    </div>
+                    <div class="ai-disclaimer">
+                        <span><i class="fas fa-shield-halved"></i> 100% In-Browser Execution • No user data or queries leave your device</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+        <div class="container">
+            <span class="section-kicker">[ 08 // CONNECT ]</span>
+            <h2>Get Started with CryptaCore</h2>
+            <p class="section-subtitle">Connect with our core architecture team for institutional deployment inquiries</p>
+
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <i class="fas fa-envelope"></i>
+                        <h4>Direct Inquiries</h4>
+                        <p><a href="mailto:team@cryptacore.io">team@cryptacore.io</a></p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-award"></i>
+                        <h4>Competition</h4>
+                        <p>Smart India Hackathon 2026</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-github"></i>
+                        <h4>Open Source</h4>
+                        <p><a href="https://github.com/cryptacore" target="_blank">github.com/cryptacore</a></p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-book-open"></i>
+                        <h4>Documentation</h4>
+                        <p><a href="QUICKSTART.html">Read Quick Start Guide</a></p>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name or Institution" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Your Deployment Requirements or Message..." rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-openai-primary" style="width: 100%; justify-content: center;">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" style="border-top: 1px solid var(--border-color); background: var(--bg-primary); padding: 60px 20px 30px;">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
+                        <img src="logo.svg" alt="CryptaCore Logo" style="width: 28px; height: 28px;">
+                        <h4 style="margin: 0; color: #ffffff;">CryptaCore</h4>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Building verifiable trust in real-world digital records through blockchain and cryptographic proof.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Portals</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="verify.html">Verify Portal</a></li>
+                        <li><a href="admin.html">Admin Console</a></li>
+                        <li><a href="QUICKSTART.html">Quick Start Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="QUICKSTART.html">Developer Setup</a></li>
+                        <li><a href="admin.html">Certificate Authority</a></li>
+                        <li><a href="#demo">Interactive Playground</a></li>
+                        <li><a href="#problem">Problem Analysis</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Hackathon Reference</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Smart India Hackathon 2026</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Problem ID: SIH26194</p>
+                    <p style="font-size: 0.85rem; color: #38bdf8; font-weight: 600;">Theme: Blockchain & Cybersecurity</p>
+                </div>
+            </div>
+            <div class="footer-bottom" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                <p>&copy; 2026 CryptaCore. All rights reserved. Built for SIH 2026.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Active Theory Precision Magnetic Cursor Elements -->
+    <div id="atCursorDot" class="at-cursor-dot" aria-hidden="true"></div>
+    <div id="atCursorRing" class="at-cursor-ring" aria-hidden="true"></div>
+
+    <!-- CryptaCore Shared Architecture Engine -->
+    <script type="module" src="cryptacore-core.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
